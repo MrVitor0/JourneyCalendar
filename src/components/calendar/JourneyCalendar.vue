@@ -1,8 +1,10 @@
 <template>
   <div class="journey-calendar h-full flex flex-col">
-    <div class="flex gap-6 flex-1 overflow-hidden">
+    <div
+      class="flex flex-col lg:flex-row gap-3 sm:gap-4 lg:gap-6 flex-1 overflow-hidden"
+    >
       <!-- Sidebar - Left -->
-      <div class="w-80 shrink-0 flex flex-col overflow-hidden">
+      <div class="w-full lg:w-80 shrink-0 flex flex-col overflow-hidden">
         <CalendarSidebar />
       </div>
 

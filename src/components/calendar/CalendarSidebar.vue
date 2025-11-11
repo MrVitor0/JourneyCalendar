@@ -1,19 +1,22 @@
 <template>
   <div class="h-full flex flex-col">
-    <div class="flex items-center gap-2 mb-4">
+    <div class="flex items-center gap-1.5 sm:gap-2 mb-3 sm:mb-4">
       <button
         v-for="view in views"
         :key="view.id"
         @click="currentView = view.id"
         :class="[
-          'flex-1 flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl transition-all',
+          'flex-1 flex items-center justify-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-2 sm:py-2.5 rounded-lg sm:rounded-xl transition-all',
           currentView === view.id
             ? 'bg-blue-500/20 border-2 border-blue-500/50 text-blue-400'
             : 'bg-gray-800/40 border-2 border-white/5 text-gray-400 hover:bg-gray-800/60 hover:border-white/10',
         ]"
       >
-        <component :is="view.icon" class="w-4 h-4" />
-        <span class="text-xs font-semibold">{{ view.label }}</span>
+        <component :is="view.icon" class="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+        <span
+          class="text-[0.65rem] sm:text-xs font-semibold hidden sm:inline"
+          >{{ view.label }}</span
+        >
       </button>
     </div>
 

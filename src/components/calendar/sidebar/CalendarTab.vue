@@ -1,25 +1,27 @@
 <template>
-  <div class="space-y-4">
+  <div class="space-y-3 sm:space-y-4">
     <!-- Quick Actions -->
     <div
-      class="bg-linear-to-br from-blue-500/20 via-purple-500/20 to-pink-500/20 backdrop-blur-sm rounded-xl p-5 border border-white/10 shadow-lg"
+      class="bg-linear-to-br from-blue-500/20 via-purple-500/20 to-pink-500/20 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-5 border border-white/10 shadow-lg"
     >
-      <h3 class="text-sm font-semibold text-white mb-4 flex items-center gap-2">
-        <Zap class="w-4 h-4 text-yellow-400" />
+      <h3
+        class="text-xs sm:text-sm font-semibold text-white mb-3 sm:mb-4 flex items-center gap-2"
+      >
+        <Zap class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-yellow-400" />
         Quick Actions
       </h3>
 
-      <div class="grid grid-cols-2 gap-3">
+      <div class="grid grid-cols-2 gap-2 sm:gap-3">
         <button
           @click="handleQuickAction('today')"
-          class="bg-gray-800/60 backdrop-blur-sm rounded-xl p-3 border border-white/10 hover:border-blue-500/50 hover:bg-gray-800/80 transition-all group"
+          class="bg-gray-800/60 backdrop-blur-sm rounded-lg sm:rounded-xl p-2 sm:p-3 border border-white/10 hover:border-blue-500/50 hover:bg-gray-800/80 transition-all group"
         >
-          <div class="flex flex-col items-center gap-2">
+          <div class="flex flex-col items-center gap-1 sm:gap-2">
             <CalendarDays
-              class="w-5 h-5 text-blue-400 group-hover:text-blue-300 transition-colors"
+              class="w-4 h-4 sm:w-5 sm:h-5 text-blue-400 group-hover:text-blue-300 transition-colors"
             />
             <span
-              class="text-xs font-medium text-gray-300 group-hover:text-white transition-colors"
+              class="text-[0.65rem] sm:text-xs font-medium text-gray-300 group-hover:text-white transition-colors"
             >
               Go to Today
             </span>
@@ -28,14 +30,14 @@
 
         <button
           @click="handleQuickAction('event')"
-          class="bg-gray-800/60 backdrop-blur-sm rounded-xl p-3 border border-white/10 hover:border-green-500/50 hover:bg-gray-800/80 transition-all group"
+          class="bg-gray-800/60 backdrop-blur-sm rounded-lg sm:rounded-xl p-2 sm:p-3 border border-white/10 hover:border-green-500/50 hover:bg-gray-800/80 transition-all group"
         >
-          <div class="flex flex-col items-center gap-2">
+          <div class="flex flex-col items-center gap-1 sm:gap-2">
             <Plus
-              class="w-5 h-5 text-green-400 group-hover:text-green-300 transition-colors"
+              class="w-4 h-4 sm:w-5 sm:h-5 text-green-400 group-hover:text-green-300 transition-colors"
             />
             <span
-              class="text-xs font-medium text-gray-300 group-hover:text-white transition-colors"
+              class="text-[0.65rem] sm:text-xs font-medium text-gray-300 group-hover:text-white transition-colors"
             >
               New Event
             </span>
@@ -44,14 +46,14 @@
 
         <button
           @click="handleQuickAction('week')"
-          class="bg-gray-800/60 backdrop-blur-sm rounded-xl p-3 border border-white/10 hover:border-purple-500/50 hover:bg-gray-800/80 transition-all group"
+          class="bg-gray-800/60 backdrop-blur-sm rounded-lg sm:rounded-xl p-2 sm:p-3 border border-white/10 hover:border-purple-500/50 hover:bg-gray-800/80 transition-all group"
         >
-          <div class="flex flex-col items-center gap-2">
+          <div class="flex flex-col items-center gap-1 sm:gap-2">
             <List
-              class="w-5 h-5 text-purple-400 group-hover:text-purple-300 transition-colors"
+              class="w-4 h-4 sm:w-5 sm:h-5 text-purple-400 group-hover:text-purple-300 transition-colors"
             />
             <span
-              class="text-xs font-medium text-gray-300 group-hover:text-white transition-colors"
+              class="text-[0.65rem] sm:text-xs font-medium text-gray-300 group-hover:text-white transition-colors"
             >
               Week View
             </span>
@@ -60,14 +62,14 @@
 
         <button
           @click="handleQuickAction('refresh')"
-          class="bg-gray-800/60 backdrop-blur-sm rounded-xl p-3 border border-white/10 hover:border-orange-500/50 hover:bg-gray-800/80 transition-all group"
+          class="bg-gray-800/60 backdrop-blur-sm rounded-lg sm:rounded-xl p-2 sm:p-3 border border-white/10 hover:border-orange-500/50 hover:bg-gray-800/80 transition-all group"
         >
-          <div class="flex flex-col items-center gap-2">
+          <div class="flex flex-col items-center gap-1 sm:gap-2">
             <RefreshCw
-              class="w-5 h-5 text-orange-400 group-hover:text-orange-300 transition-colors"
+              class="w-4 h-4 sm:w-5 sm:h-5 text-orange-400 group-hover:text-orange-300 transition-colors"
             />
             <span
-              class="text-xs font-medium text-gray-300 group-hover:text-white transition-colors"
+              class="text-[0.65rem] sm:text-xs font-medium text-gray-300 group-hover:text-white transition-colors"
             >
               Refresh
             </span>
@@ -76,94 +78,30 @@
       </div>
     </div>
 
-    <!-- Calendar Statistics -->
-    <div
-      class="bg-gray-800/40 backdrop-blur-sm rounded-xl p-5 border border-white/10"
-    >
-      <h3 class="text-sm font-semibold text-white mb-4 flex items-center gap-2">
-        <BarChart3 class="w-4 h-4 text-blue-400" />
-        Calendar Overview
-      </h3>
-
-      <div class="space-y-3">
-        <div
-          class="flex items-center justify-between p-3 rounded-lg bg-linear-to-r from-blue-500/10 to-blue-500/5 border border-blue-500/20"
-        >
-          <div class="flex items-center gap-3">
-            <div
-              class="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center"
-            >
-              <Calendar class="w-5 h-5 text-blue-400" />
-            </div>
-            <div>
-              <p class="text-xs text-gray-400">Total Events</p>
-              <p class="text-lg font-bold text-white">
-                {{ totalEvents }}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div
-          class="flex items-center justify-between p-3 rounded-lg bg-linear-to-r from-green-500/10 to-green-500/5 border border-green-500/20"
-        >
-          <div class="flex items-center gap-3">
-            <div
-              class="w-10 h-10 rounded-full bg-green-500/20 flex items-center justify-center"
-            >
-              <CalendarCheck class="w-5 h-5 text-green-400" />
-            </div>
-            <div>
-              <p class="text-xs text-gray-400">This Month</p>
-              <p class="text-lg font-bold text-white">
-                {{ eventsThisMonth }}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div
-          class="flex items-center justify-between p-3 rounded-lg bg-linear-to-r from-purple-500/10 to-purple-500/5 border border-purple-500/20"
-        >
-          <div class="flex items-center gap-3">
-            <div
-              class="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center"
-            >
-              <Clock class="w-5 h-5 text-purple-400" />
-            </div>
-            <div>
-              <p class="text-xs text-gray-400">Upcoming</p>
-              <p class="text-lg font-bold text-white">
-                {{ upcomingEvents }}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <!-- My Calendars Section -->
     <div
-      class="bg-gray-800/40 backdrop-blur-sm rounded-xl p-5 border border-white/10"
+      class="bg-gray-800/40 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-5 border border-white/10"
     >
-      <div class="flex items-center justify-between mb-4">
-        <h3 class="text-sm font-semibold text-white flex items-center gap-2">
-          <Layers class="w-4 h-4 text-blue-400" />
+      <div class="flex items-center justify-between mb-3 sm:mb-4">
+        <h3
+          class="text-xs sm:text-sm font-semibold text-white flex items-center gap-2"
+        >
+          <Layers class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-400" />
           My Calendars
         </h3>
         <button
           @click="toggleAllCalendars"
-          class="text-xs text-blue-400 hover:text-blue-300 transition-colors font-medium"
+          class="text-[0.65rem] sm:text-xs text-blue-400 hover:text-blue-300 transition-colors font-medium"
         >
           {{ allCalendarsVisible ? "Hide All" : "Show All" }}
         </button>
       </div>
 
-      <div class="space-y-2">
+      <div class="space-y-1.5 sm:space-y-2">
         <div
           v-for="calendar in calendars"
           :key="calendar.id"
-          class="flex items-center gap-3 p-3 rounded-lg hover:bg-white/5 transition-all cursor-pointer group border border-transparent hover:border-white/10"
+          class="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg hover:bg-white/5 transition-all cursor-pointer group border border-transparent hover:border-white/10"
           @click="toggleVisibility(calendar.id)"
         >
           <CustomCheckbox
@@ -172,14 +110,14 @@
             :label="calendar.name"
             @update:model-value="toggleVisibility(calendar.id)"
           />
-          <div class="ml-auto flex items-center gap-2">
+          <div class="ml-auto flex items-center gap-1.5 sm:gap-2">
             <span
-              class="text-xs text-gray-500 group-hover:text-gray-400 transition-colors"
+              class="text-[0.65rem] sm:text-xs text-gray-500 group-hover:text-gray-400 transition-colors"
             >
               {{ getCalendarEventCount(calendar.id) }}
             </span>
             <ChevronRight
-              class="w-4 h-4 text-gray-600 group-hover:text-gray-400 transition-colors opacity-0 group-hover:opacity-100"
+              class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-600 group-hover:text-gray-400 transition-colors opacity-0 group-hover:opacity-100"
             />
           </div>
         </div>
@@ -188,48 +126,50 @@
 
     <!-- View Options -->
     <div
-      class="bg-gray-800/40 backdrop-blur-sm rounded-xl p-5 border border-white/10"
+      class="bg-gray-800/40 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-5 border border-white/10"
     >
-      <h3 class="text-sm font-semibold text-white mb-4 flex items-center gap-2">
-        <Settings class="w-4 h-4 text-blue-400" />
+      <h3
+        class="text-xs sm:text-sm font-semibold text-white mb-3 sm:mb-4 flex items-center gap-2"
+      >
+        <Settings class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-400" />
         View Settings
       </h3>
 
-      <div class="space-y-3">
+      <div class="space-y-2 sm:space-y-3">
         <button
           @click="toggleViewMode"
-          class="w-full flex items-center justify-between p-3 rounded-lg bg-gray-800/60 hover:bg-gray-800/80 transition-all border border-white/10 hover:border-white/20"
+          class="w-full flex items-center justify-between p-2 sm:p-3 rounded-lg bg-gray-800/60 hover:bg-gray-800/80 transition-all border border-white/10 hover:border-white/20"
         >
-          <div class="flex items-center gap-3">
+          <div class="flex items-center gap-2 sm:gap-3">
             <component
               :is="viewMode === 'month' ? CalendarDays : List"
-              class="w-4 h-4 text-blue-400"
+              class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-400"
             />
-            <span class="text-sm text-gray-200">
+            <span class="text-xs sm:text-sm text-gray-200">
               {{ viewMode === "month" ? "Month View" : "Week View" }}
             </span>
           </div>
-          <ArrowLeftRight class="w-4 h-4 text-gray-500" />
+          <ArrowLeftRight class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-500" />
         </button>
 
         <button
           @click="toggleShowWeekends"
-          class="w-full flex items-center justify-between p-3 rounded-lg bg-gray-800/60 hover:bg-gray-800/80 transition-all border border-white/10 hover:border-white/20"
+          class="w-full flex items-center justify-between p-2 sm:p-3 rounded-lg bg-gray-800/60 hover:bg-gray-800/80 transition-all border border-white/10 hover:border-white/20"
         >
-          <div class="flex items-center gap-3">
-            <Sun class="w-4 h-4 text-yellow-400" />
-            <span class="text-sm text-gray-200">Show Weekends</span>
+          <div class="flex items-center gap-2 sm:gap-3">
+            <Sun class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-yellow-400" />
+            <span class="text-xs sm:text-sm text-gray-200">Show Weekends</span>
           </div>
           <div
             :class="[
-              'w-10 h-6 rounded-full transition-all relative',
+              'w-9 h-5 sm:w-10 sm:h-6 rounded-full transition-all relative',
               showWeekends ? 'bg-blue-500' : 'bg-gray-600',
             ]"
           >
             <div
               :class="[
-                'absolute top-1 w-4 h-4 rounded-full bg-white transition-all',
-                showWeekends ? 'left-5' : 'left-1',
+                'absolute top-0.5 sm:top-1 w-4 h-4 rounded-full bg-white transition-all',
+                showWeekends ? 'left-4 sm:left-5' : 'left-0.5 sm:left-1',
               ]"
             />
           </div>

@@ -1,22 +1,22 @@
 <template>
-  <div class="flex items-center gap-3">
+  <div class="flex items-center gap-2 sm:gap-3">
     <button
       type="button"
       @click="toggle"
       :class="[
-        'w-5 h-5 rounded border-2 flex items-center justify-center transition-all shrink-0',
+        'w-4 h-4 sm:w-5 sm:h-5 rounded border-2 flex items-center justify-center transition-all shrink-0',
         checked
           ? `${colorClass} border-transparent`
           : 'border-gray-500 bg-transparent',
       ]"
     >
-      <Check v-if="checked" class="w-3 h-3 text-white" />
+      <Check v-if="checked" class="w-2.5 h-2.5 sm:w-3 sm:h-3 text-white" />
     </button>
     <span
       v-if="label"
       @click="toggle"
       :class="[
-        'text-sm font-medium cursor-pointer transition-colors',
+        'text-xs sm:text-sm font-medium cursor-pointer transition-colors',
         checked ? 'text-gray-200' : 'text-gray-500',
       ]"
     >

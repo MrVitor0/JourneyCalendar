@@ -1,25 +1,29 @@
 <template>
   <div
-    class="bg-gray-800/60 backdrop-blur-xl rounded-2xl shadow-2xl p-8 border border-white/10 hover:border-white/20 transition-all duration-300"
+    class="bg-gray-800/60 backdrop-blur-xl rounded-xl sm:rounded-2xl shadow-2xl p-3 sm:p-5 lg:p-8 border border-white/10 hover:border-white/20 transition-all duration-300"
   >
     <!-- Calendar Header -->
-    <div class="flex items-center justify-between mb-6">
+    <div
+      class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 sm:mb-6 gap-3"
+    >
       <!-- Month and Year Display -->
-      <h2 class="text-2xl font-bold text-white">
+      <h2 class="text-xl sm:text-2xl font-bold text-white">
         {{ formattedMonthYear }}
       </h2>
 
       <!-- Navigation Controls -->
-      <div class="flex items-center gap-3">
+      <div
+        class="flex items-center gap-2 sm:gap-3 w-full sm:w-auto justify-between sm:justify-start"
+      >
         <!-- Previous Month Button -->
         <button
           @click="previousMonth"
-          class="p-2 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-all duration-200 hover:scale-105"
+          class="p-1.5 sm:p-2 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-all duration-200 hover:scale-105"
           aria-label="Previous month"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            class="h-5 w-5"
+            class="h-4 w-4 sm:h-5 sm:w-5"
             viewBox="0 0 20 20"
             fill="currentColor"
           >
@@ -34,7 +38,7 @@
         <!-- Today Button -->
         <button
           @click="goToToday"
-          class="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white font-medium transition-all duration-200 hover:scale-105"
+          class="px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white text-sm sm:text-base font-medium transition-all duration-200 hover:scale-105"
         >
           Today
         </button>
@@ -42,12 +46,12 @@
         <!-- Next Month Button -->
         <button
           @click="nextMonth"
-          class="p-2 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-all duration-200 hover:scale-105"
+          class="p-1.5 sm:p-2 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-all duration-200 hover:scale-105"
           aria-label="Next month"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            class="h-5 w-5"
+            class="h-4 w-4 sm:h-5 sm:w-5"
             viewBox="0 0 20 20"
             fill="currentColor"
           >
@@ -60,13 +64,13 @@
         </button>
 
         <!-- View Mode Selector -->
-        <div class="flex bg-white/10 rounded-lg p-1 ml-2">
+        <div class="flex bg-white/10 rounded-lg p-1 ml-1 sm:ml-2">
           <button
             @click="setViewMode('month')"
             :class="[
-              'px-3 py-1 rounded-md text-sm font-medium transition-all duration-200',
+              'px-2 sm:px-3 py-1 rounded-md text-xs sm:text-sm font-medium transition-all duration-200',
               viewMode === 'month'
-                ? 'bg-white text-gray-900'
+                ? 'bg-white/20 text-white'
                 : 'text-white hover:bg-white/10',
             ]"
           >
@@ -77,18 +81,18 @@
     </div>
 
     <!-- Weekday Headers -->
-    <div class="grid grid-cols-7 gap-2 mb-4">
+    <div class="grid grid-cols-7 gap-1 sm:gap-2 mb-2 sm:mb-4">
       <div
         v-for="day in weekDays"
         :key="day"
-        class="text-center text-sm font-semibold text-gray-300 py-2"
+        class="text-center text-xs sm:text-sm font-semibold text-gray-300 py-1 sm:py-2"
       >
         {{ day }}
       </div>
     </div>
 
     <!-- Calendar Grid -->
-    <div class="grid grid-cols-7 gap-2">
+    <div class="grid grid-cols-7 gap-1 sm:gap-2">
       <CalendarDay
         v-for="(day, index) in calendarDays"
         :key="index"

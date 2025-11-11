@@ -16,7 +16,9 @@
     <!-- Main Content -->
     <div class="relative z-10 flex-1 flex flex-col">
       <!-- Calendar Component -->
-      <div class="flex-1 container mx-auto px-6 py-6">
+      <div
+        class="flex-1 container mx-auto px-2 py-2 sm:px-4 sm:py-4 lg:px-6 lg:py-6"
+      >
         <JourneyCalendar />
       </div>
     </div>
