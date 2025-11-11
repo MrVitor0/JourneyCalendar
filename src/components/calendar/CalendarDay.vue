@@ -38,56 +38,48 @@
   </div>
 </template>
 
-<script setup>
-import { computed, defineProps, defineEmits } from "vue";
+<script setup lang="ts">
+import { computed } from "vue";
 import { format } from "date-fns";
+import type { CalendarEvent, ColorType } from "@/types/calendar";
 
-const props = defineProps({
-  date: {
-    type: Date,
-    required: true,
-  },
-  isCurrentMonth: {
-    type: Boolean,
-    default: true,
-  },
-  isSelected: {
-    type: Boolean,
-    default: false,
-  },
-  isToday: {
-    type: Boolean,
-    default: false,
-  },
-  events: {
-    type: Array,
-    default: () => [],
-  },
+interface Props {
+  date: Date;
+  isCurrentMonth?: boolean;
+  isSelected?: boolean;
+  isToday?: boolean;
+  events?: CalendarEvent[];
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  isCurrentMonth: true,
+  isSelected: false,
+  isToday: false,
+  events: () => [],
 });
 
-const emit = defineEmits(["select"]);
+const emit = defineEmits<{
+  select: [date: Date];
+}>();
 
-const dayNumber = computed(() => format(props.date, "d"));
+const dayNumber = computed((): string => format(props.date, "d"));
 
-const handleClick = () => {
+const handleClick = (): void => {
   emit("select", props.date);
 };
 
 /**
  * Get Tailwind classes for event colors
- * @param {string} color - Color name
- * @returns {string} Tailwind classes
  */
-const getEventColorClass = (color) => {
-  const colorMap = {
+const getEventColorClass = (color: ColorType): string => {
+  const colorMap: Record<ColorType, string> = {
     gray: "bg-gray-600 text-gray-100",
     blue: "bg-blue-600 text-blue-100",
     purple: "bg-purple-600 text-purple-100",
     green: "bg-green-600 text-green-100",
     red: "bg-red-600 text-red-100",
     yellow: "bg-yellow-600 text-yellow-100",
-    pink: "bg-pink-600 text-pink-100",
-    indigo: "bg-indigo-600 text-indigo-100",
+    orange: "bg-orange-600 text-orange-100",
   };
 
   return colorMap[color] || colorMap.gray;

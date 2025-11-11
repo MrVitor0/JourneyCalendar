@@ -23,7 +23,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import JourneyCalendar from "@/components/calendar/JourneyCalendar.vue";
 </script>
 

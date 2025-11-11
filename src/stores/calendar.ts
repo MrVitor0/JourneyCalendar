@@ -13,6 +13,15 @@ import {
   isToday,
   parseISO,
 } from "date-fns";
+import type { CalendarEvent, Calendar, ViewMode } from "@/types/calendar";
+
+interface CalendarStoreState {
+  currentDate: Date;
+  selectedDate: Date | null;
+  viewMode: ViewMode;
+  events: CalendarEvent[];
+  calendars: Calendar[];
+}
 
 /**
  * Calendar Store
@@ -20,10 +29,10 @@ import {
  * Follows Single Responsibility Principle by handling only calendar-related state
  */
 export const useCalendarStore = defineStore("calendar", {
-  state: () => ({
+  state: (): CalendarStoreState => ({
     currentDate: new Date(),
     selectedDate: null,
-    viewMode: "month", // month | week
+    viewMode: "month",
     events: [
       {
         id: "1",
@@ -77,24 +86,22 @@ export const useCalendarStore = defineStore("calendar", {
   getters: {
     /**
      * Get formatted month and year for display
-     * @returns {string} Formatted date string
      */
-    formattedMonthYear: (state) => {
+    formattedMonthYear: (state): string => {
       return format(state.currentDate, "MMMM yyyy");
     },
 
     /**
      * Get all days to display in the current month view
      * Includes days from previous and next months to fill the grid
-     * @returns {Array<Date>} Array of dates for the calendar grid
      */
-    calendarDays: (state) => {
+    calendarDays: (state): Date[] => {
       const monthStart = startOfMonth(state.currentDate);
       const monthEnd = endOfMonth(state.currentDate);
       const startDate = startOfWeek(monthStart, { weekStartsOn: 0 });
       const endDate = endOfWeek(monthEnd, { weekStartsOn: 0 });
 
-      const days = [];
+      const days: Date[] = [];
       let currentDay = startDate;
 
       while (currentDay <= endDate) {
@@ -107,53 +114,57 @@ export const useCalendarStore = defineStore("calendar", {
 
     /**
      * Get events for a specific date
-     * @returns {Function} Function that takes a date and returns events for that date
      */
-    getEventsForDate: (state) => (date) => {
-      return state.events.filter((event) => {
-        const eventStart = parseISO(event.startDate);
-        const eventEnd = parseISO(event.endDate);
-        return date >= eventStart && date <= eventEnd;
-      });
-    },
+    getEventsForDate:
+      (state) =>
+      (date: Date): CalendarEvent[] => {
+        return state.events.filter((event) => {
+          const eventStart = parseISO(event.startDate);
+          const eventEnd = parseISO(event.endDate);
+          return date >= eventStart && date <= eventEnd;
+        });
+      },
 
     /**
      * Check if a date is in the current month
-     * @returns {Function} Function that takes a date and returns boolean
      */
-    isDateInCurrentMonth: (state) => (date) => {
-      return isSameMonth(date, state.currentDate);
-    },
+    isDateInCurrentMonth:
+      (state) =>
+      (date: Date): boolean => {
+        return isSameMonth(date, state.currentDate);
+      },
 
     /**
      * Check if a date is selected
-     * @returns {Function} Function that takes a date and returns boolean
      */
-    isDateSelected: (state) => (date) => {
-      return state.selectedDate && isSameDay(date, state.selectedDate);
-    },
+    isDateSelected:
+      (state) =>
+      (date: Date): boolean => {
+        return (
+          state.selectedDate !== null && isSameDay(date, state.selectedDate)
+        );
+      },
 
     /**
      * Check if a date is today
-     * @returns {Function} Function that takes a date and returns boolean
      */
-    isDateToday: () => (date) => {
-      return isToday(date);
-    },
+    isDateToday:
+      () =>
+      (date: Date): boolean => {
+        return isToday(date);
+      },
 
     /**
      * Get visible calendars
-     * @returns {Array} Array of visible calendar objects
      */
-    visibleCalendars: (state) => {
+    visibleCalendars: (state): Calendar[] => {
       return state.calendars.filter((cal) => cal.visible);
     },
 
     /**
      * Get filtered events based on visible calendars
-     * @returns {Array} Array of visible events
      */
-    visibleEvents: (state) => {
+    visibleEvents: (state): CalendarEvent[] => {
       const visibleCalendarNames = state.calendars
         .filter((cal) => cal.visible)
         .map((cal) => cal.name);
@@ -168,49 +179,44 @@ export const useCalendarStore = defineStore("calendar", {
     /**
      * Navigate to the next month
      */
-    nextMonth() {
+    nextMonth(): void {
       this.currentDate = addMonths(this.currentDate, 1);
     },
 
     /**
      * Navigate to the previous month
      */
-    previousMonth() {
+    previousMonth(): void {
       this.currentDate = subMonths(this.currentDate, 1);
     },
 
     /**
      * Navigate to today
      */
-    goToToday() {
+    goToToday(): void {
       this.currentDate = new Date();
       this.selectedDate = new Date();
     },
 
     /**
      * Select a specific date
-     * @param {Date} date - Date to select
      */
-    selectDate(date) {
+    selectDate(date: Date): void {
       this.selectedDate = date;
     },
 
     /**
      * Change view mode
-     * @param {string} mode - View mode (month | week)
      */
-    setViewMode(mode) {
-      if (["month", "week"].includes(mode)) {
-        this.viewMode = mode;
-      }
+    setViewMode(mode: ViewMode): void {
+      this.viewMode = mode;
     },
 
     /**
      * Add a new event
-     * @param {Object} event - Event object
      */
-    addEvent(event) {
-      const newEvent = {
+    addEvent(event: Omit<CalendarEvent, "id">): void {
+      const newEvent: CalendarEvent = {
         id: Date.now().toString(),
         ...event,
       };
@@ -219,10 +225,8 @@ export const useCalendarStore = defineStore("calendar", {
 
     /**
      * Update an existing event
-     * @param {string} id - Event ID
-     * @param {Object} updates - Event updates
      */
-    updateEvent(id, updates) {
+    updateEvent(id: string, updates: Partial<CalendarEvent>): void {
       const index = this.events.findIndex((e) => e.id === id);
       if (index !== -1) {
         this.events[index] = { ...this.events[index], ...updates };
@@ -231,9 +235,8 @@ export const useCalendarStore = defineStore("calendar", {
 
     /**
      * Delete an event
-     * @param {string} id - Event ID
      */
-    deleteEvent(id) {
+    deleteEvent(id: string): void {
       const index = this.events.findIndex((e) => e.id === id);
       if (index !== -1) {
         this.events.splice(index, 1);
@@ -242,9 +245,8 @@ export const useCalendarStore = defineStore("calendar", {
 
     /**
      * Toggle calendar visibility
-     * @param {string} calendarId - Calendar ID
      */
-    toggleCalendarVisibility(calendarId) {
+    toggleCalendarVisibility(calendarId: string): void {
       const calendar = this.calendars.find((cal) => cal.id === calendarId);
       if (calendar) {
         calendar.visible = !calendar.visible;

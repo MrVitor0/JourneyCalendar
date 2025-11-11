@@ -103,25 +103,27 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { storeToRefs } from "pinia";
 import { useCalendarStore } from "@/stores/calendar";
 import CalendarDay from "./CalendarDay.vue";
 
 const calendarStore = useCalendarStore();
 
+const { calendarDays, formattedMonthYear, viewMode } =
+  storeToRefs(calendarStore);
+
 const {
-  calendarDays,
-  formattedMonthYear,
-  viewMode,
   getEventsForDate,
   isDateInCurrentMonth,
   isDateSelected,
   isDateToday,
-} = storeToRefs(calendarStore);
+  selectDate,
+  nextMonth,
+  previousMonth,
+  goToToday,
+  setViewMode,
+} = calendarStore;
 
-const { selectDate, nextMonth, previousMonth, goToToday, setViewMode } =
-  calendarStore;
-
-const weekDays = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
+const weekDays: string[] = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
 </script>

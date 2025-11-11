@@ -63,32 +63,30 @@
   </Teleport>
 </template>
 
-<script setup>
-/* eslint-disable no-undef */
-/* eslint-disable vue/multi-word-component-names */
+<script setup lang="ts">
 import { computed } from "vue";
 import { X } from "lucide-vue-next";
 
-const props = defineProps({
-  modelValue: {
-    type: Boolean,
-    default: false,
-  },
-  title: {
-    type: String,
-    default: "",
-  },
-  maxWidth: {
-    type: String,
-    default: "md",
-    validator: (value) => ["sm", "md", "lg", "xl", "2xl"].includes(value),
-  },
+type MaxWidth = "sm" | "md" | "lg" | "xl" | "2xl";
+
+interface Props {
+  modelValue?: boolean;
+  title?: string;
+  maxWidth?: MaxWidth;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  modelValue: false,
+  title: "",
+  maxWidth: "md",
 });
 
-const emit = defineEmits(["update:modelValue"]);
+const emit = defineEmits<{
+  "update:modelValue": [value: boolean];
+}>();
 
-const maxWidthClass = computed(() => {
-  const sizes = {
+const maxWidthClass = computed((): string => {
+  const sizes: Record<MaxWidth, string> = {
     sm: "max-w-sm",
     md: "max-w-md",
     lg: "max-w-lg",
@@ -98,7 +96,7 @@ const maxWidthClass = computed(() => {
   return sizes[props.maxWidth] || sizes.md;
 });
 
-const close = () => {
+const close = (): void => {
   emit("update:modelValue", false);
 };
 </script>

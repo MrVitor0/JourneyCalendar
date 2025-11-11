@@ -207,12 +207,19 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed } from "vue";
 import { storeToRefs } from "pinia";
 import { useCalendarStore } from "@/stores/calendar";
 import CustomCheckbox from "@/components/common/CustomCheckbox.vue";
 import CircleSelect from "@/components/common/CircleSelect.vue";
+import type {
+  ViewId,
+  WeatherOption,
+  CalendarOption,
+  NewEventForm,
+} from "@/types/components";
+import type { ColorType } from "@/types/calendar";
 import {
   Calendar,
   Plus,
@@ -234,18 +241,15 @@ const calendarStore = useCalendarStore();
 const { calendars } = storeToRefs(calendarStore);
 const { toggleCalendarVisibility, addEvent } = calendarStore;
 
-// Current view state
-const currentView = ref("calendar");
+const currentView = ref<ViewId>("calendar");
 
-// View options
 const views = [
-  { id: "calendar", label: "Calendar", icon: Calendar },
-  { id: "event", label: "Event", icon: Plus },
-  { id: "legend", label: "Legend", icon: Filter },
+  { id: "calendar" as ViewId, label: "Calendar", icon: Calendar },
+  { id: "event" as ViewId, label: "Event", icon: Plus },
+  { id: "legend" as ViewId, label: "Legend", icon: Filter },
 ];
 
-// Weather options for CircleSelect
-const weatherOptions = [
+const weatherOptions: WeatherOption[] = [
   {
     value: "sunny",
     label: "Sunny",
@@ -283,20 +287,22 @@ const weatherOptions = [
   },
 ];
 
-// Calendar options for CircleSelect
-const calendarOptions = computed(() => {
-  const iconMap = {
+const calendarOptions = computed<CalendarOption[]>(() => {
+  const iconMap: Record<string, any> = {
     work: Briefcase,
     personal: User,
     birthdays: Cake,
     tasks: CheckSquare,
   };
 
-  const colorMap = {
+  const colorMap: Record<ColorType, { iconClass: string; bgClass: string }> = {
     gray: { iconClass: "text-gray-400", bgClass: "bg-gray-500/20" },
     blue: { iconClass: "text-blue-400", bgClass: "bg-blue-500/20" },
     green: { iconClass: "text-green-400", bgClass: "bg-green-500/20" },
     red: { iconClass: "text-red-400", bgClass: "bg-red-500/20" },
+    purple: { iconClass: "text-purple-400", bgClass: "bg-purple-500/20" },
+    yellow: { iconClass: "text-yellow-400", bgClass: "bg-yellow-500/20" },
+    orange: { iconClass: "text-orange-400", bgClass: "bg-orange-500/20" },
   };
 
   return calendars.value.map((cal) => ({
@@ -308,8 +314,7 @@ const calendarOptions = computed(() => {
   }));
 });
 
-// New event form state
-const newEvent = ref({
+const newEvent = ref<NewEventForm>({
   title: "",
   date: new Date().toISOString().split("T")[0],
   weather: "sunny",
@@ -317,13 +322,11 @@ const newEvent = ref({
   amount: "",
 });
 
-// Toggle calendar visibility
-const toggleVisibility = (calendarId) => {
+const toggleVisibility = (calendarId: string): void => {
   toggleCalendarVisibility(calendarId);
 };
 
-// Handle event creation
-const handleCreateEvent = () => {
+const handleCreateEvent = (): void => {
   if (!newEvent.value.title.trim()) {
     return;
   }
@@ -336,15 +339,14 @@ const handleCreateEvent = () => {
       calendars.value.find((c) => c.id === newEvent.value.calendar)?.name ||
       "Personal",
     color:
-      calendars.value.find((c) => c.id === newEvent.value.calendar)?.color ||
-      "blue",
-    weather: newEvent.value.weather,
+      (calendars.value.find((c) => c.id === newEvent.value.calendar)
+        ?.color as ColorType) || "blue",
+    weather: newEvent.value.weather as any,
     amount: newEvent.value.amount ? parseFloat(newEvent.value.amount) : null,
   };
 
   addEvent(eventData);
 
-  // Reset form
   newEvent.value = {
     title: "",
     date: new Date().toISOString().split("T")[0],
@@ -353,7 +355,6 @@ const handleCreateEvent = () => {
     amount: "",
   };
 
-  // Switch to calendar view
   currentView.value = "calendar";
 };
 </script>

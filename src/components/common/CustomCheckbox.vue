@@ -25,36 +25,40 @@
   </div>
 </template>
 
-<script setup>
-/* eslint-disable no-undef */
+<script setup lang="ts">
 import { computed } from "vue";
 import { Check } from "lucide-vue-next";
 
-const props = defineProps({
-  modelValue: {
-    type: Boolean,
-    default: false,
-  },
-  label: {
-    type: String,
-    default: "",
-  },
-  color: {
-    type: String,
-    default: "blue",
-    validator: (value) =>
-      ["blue", "yellow", "green", "red", "purple", "pink", "orange"].includes(
-        value
-      ),
-  },
+type CheckboxColor =
+  | "blue"
+  | "yellow"
+  | "green"
+  | "red"
+  | "purple"
+  | "pink"
+  | "orange"
+  | "gray";
+
+interface Props {
+  modelValue?: boolean;
+  label?: string;
+  color?: CheckboxColor;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  modelValue: false,
+  label: "",
+  color: "blue",
 });
 
-const emit = defineEmits(["update:modelValue"]);
+const emit = defineEmits<{
+  "update:modelValue": [value: boolean];
+}>();
 
 const checked = computed(() => props.modelValue);
 
-const colorClass = computed(() => {
-  const colors = {
+const colorClass = computed((): string => {
+  const colors: Record<CheckboxColor, string> = {
     blue: "bg-blue-500",
     yellow: "bg-yellow-500",
     green: "bg-green-500",
@@ -62,11 +66,12 @@ const colorClass = computed(() => {
     purple: "bg-purple-500",
     pink: "bg-pink-500",
     orange: "bg-orange-500",
+    gray: "bg-gray-500",
   };
   return colors[props.color] || colors.blue;
 });
 
-const toggle = () => {
+const toggle = (): void => {
   emit("update:modelValue", !checked.value);
 };
 </script>

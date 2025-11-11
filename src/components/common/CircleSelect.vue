@@ -84,49 +84,53 @@
   </div>
 </template>
 
-<script setup>
-/* eslint-disable no-undef */
+<script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from "vue";
 import { ChevronDown, Check } from "lucide-vue-next";
 
-const props = defineProps({
-  modelValue: {
-    type: [String, Number],
-    default: null,
-  },
-  options: {
-    type: Array,
-    required: true,
-  },
-  placeholder: {
-    type: String,
-    default: "Select an option",
-  },
-  label: {
-    type: String,
-    default: "",
-  },
+export interface SelectOption {
+  value: string | number;
+  label: string;
+  icon?: any;
+  iconClass?: string;
+  bgClass?: string;
+}
+
+interface Props {
+  modelValue?: string | number | null;
+  options: SelectOption[];
+  placeholder?: string;
+  label?: string;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  modelValue: null,
+  placeholder: "Select an option",
+  label: "",
 });
 
-const emit = defineEmits(["update:modelValue"]);
+const emit = defineEmits<{
+  "update:modelValue": [value: string | number];
+}>();
 
 const isOpen = ref(false);
 
-const selectedOption = computed(() => {
+const selectedOption = computed((): SelectOption | undefined => {
   return props.options.find((opt) => opt.value === props.modelValue);
 });
 
-const toggleDropdown = () => {
+const toggleDropdown = (): void => {
   isOpen.value = !isOpen.value;
 };
 
-const selectOption = (option) => {
+const selectOption = (option: SelectOption): void => {
   emit("update:modelValue", option.value);
   isOpen.value = false;
 };
 
-const handleClickOutside = (event) => {
-  if (isOpen.value && !event.target.closest(".relative")) {
+const handleClickOutside = (event: MouseEvent): void => {
+  const target = event.target as HTMLElement;
+  if (isOpen.value && !target.closest(".relative")) {
     isOpen.value = false;
   }
 };

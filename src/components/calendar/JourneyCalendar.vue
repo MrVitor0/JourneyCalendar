@@ -14,7 +14,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import CalendarGrid from "./CalendarGrid.vue";
 import CalendarSidebar from "./CalendarSidebar.vue";
 </script>

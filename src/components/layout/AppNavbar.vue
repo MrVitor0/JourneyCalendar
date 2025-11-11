@@ -27,7 +27,7 @@
   </nav>
 </template>
 
-<script setup>
+<script setup lang="ts">
 // Navigation bar component for the application
 // Displays logo and app title with a clean, neutral design
 </script>
