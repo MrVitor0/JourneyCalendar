@@ -19,7 +19,17 @@ export interface CalendarOption {
 export interface NewEventForm {
   title: string;
   date: string;
+  time: string;
+  city: string;
   weather: string;
   calendar: string;
   amount: string;
+}
+
+export interface ReminderFormData {
+  title: string;
+  date: string;
+  time: string;
+  city: string;
+  calendar: string;
 }

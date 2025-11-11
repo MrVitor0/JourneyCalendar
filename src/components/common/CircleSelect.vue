@@ -7,19 +7,22 @@
       <button
         type="button"
         @click="toggleDropdown"
-        class="w-full flex items-center gap-3 bg-gray-800/60 backdrop-blur-sm rounded-full px-4 py-3 border border-white/10 hover:border-white/20 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+        class="w-full flex items-center gap-2.5 bg-gray-800/60 backdrop-blur-sm rounded-xl px-4 py-3 border border-white/10 hover:border-white/20 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500/50"
       >
         <div
           v-if="selectedOption"
           :class="[
-            'w-8 h-8 rounded-full flex items-center justify-center shrink-0',
+            'w-6 h-6 rounded-full flex items-center justify-center shrink-0',
             selectedOption.bgClass || 'bg-blue-500/20',
           ]"
         >
           <component
             v-if="selectedOption.icon"
             :is="selectedOption.icon"
-            :class="['w-4 h-4', selectedOption.iconClass || 'text-blue-400']"
+            :class="[
+              'w-3.5 h-3.5',
+              selectedOption.iconClass || 'text-blue-400',
+            ]"
           />
         </div>
         <span class="flex-1 text-left text-sm font-medium text-gray-200">
@@ -53,20 +56,20 @@
               type="button"
               @click="selectOption(option)"
               :class="[
-                'w-full flex items-center gap-3 px-4 py-3 hover:bg-white/5 transition-colors',
+                'w-full flex items-center gap-2.5 px-4 py-2.5 hover:bg-white/5 transition-colors',
                 modelValue === option.value ? 'bg-white/10' : '',
               ]"
             >
               <div
                 :class="[
-                  'w-8 h-8 rounded-full flex items-center justify-center shrink-0',
+                  'w-6 h-6 rounded-full flex items-center justify-center shrink-0',
                   option.bgClass || 'bg-blue-500/20',
                 ]"
               >
                 <component
                   v-if="option.icon"
                   :is="option.icon"
-                  :class="['w-4 h-4', option.iconClass || 'text-blue-400']"
+                  :class="['w-3.5 h-3.5', option.iconClass || 'text-blue-400']"
                 />
               </div>
               <span class="flex-1 text-left text-sm font-medium text-gray-200">

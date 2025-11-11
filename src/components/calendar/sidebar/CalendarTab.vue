@@ -29,7 +29,7 @@
         </button>
 
         <button
-          @click="handleQuickAction('event')"
+          @click="showReminderModal = true"
           class="bg-gray-800/60 backdrop-blur-sm rounded-lg sm:rounded-xl p-2 sm:p-3 border border-white/10 hover:border-green-500/50 hover:bg-gray-800/80 transition-all group"
         >
           <div class="flex flex-col items-center gap-1 sm:gap-2">
@@ -176,6 +176,13 @@
         </button>
       </div>
     </div>
+
+    <!-- Reminder Modal -->
+    <ReminderModal
+      v-model="showReminderModal"
+      :selected-date="calendarStore.selectedDate"
+      @created="handleReminderCreated"
+    />
   </div>
 </template>
 
@@ -184,6 +191,7 @@ import { computed, ref } from "vue";
 import { storeToRefs } from "pinia";
 import { useCalendarStore } from "@/stores/calendar";
 import CustomCheckbox from "@/components/common/CustomCheckbox.vue";
+import ReminderModal from "@/components/common/ReminderModal.vue";
 import {
   Calendar,
   CalendarDays,
@@ -214,6 +222,7 @@ const { calendars, viewMode } = storeToRefs(calendarStore);
 const { toggleCalendarVisibility, setViewMode } = calendarStore;
 
 const showWeekends = ref<boolean>(true);
+const showReminderModal = ref<boolean>(false);
 
 // Computed properties for statistics
 const totalEvents = computed((): number => {
@@ -277,5 +286,9 @@ const toggleViewMode = (): void => {
 
 const toggleShowWeekends = (): void => {
   showWeekends.value = !showWeekends.value;
+};
+
+const handleReminderCreated = (): void => {
+  showReminderModal.value = false;
 };
 </script>

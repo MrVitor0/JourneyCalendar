@@ -18,6 +18,8 @@ export interface CalendarEvent {
   calendar: string;
   weather: WeatherType;
   amount: number | null;
+  city?: string;
+  time?: string;
 }
 
 export interface Calendar {
