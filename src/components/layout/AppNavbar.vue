@@ -1,16 +1,14 @@
 <template>
-  <nav
-    class="bg-slate-800/95 backdrop-blur-sm border-b border-slate-700/50 shadow-lg"
-  >
-    <div class="container mx-auto px-6 py-3 flex items-center justify-between">
+  <nav class="bg-black/20 backdrop-blur-sm border-b border-white/5">
+    <div class="container mx-auto px-6 py-4 flex items-center justify-between">
       <!-- Logo and Title -->
       <div class="flex items-center gap-3">
         <div
-          class="w-9 h-9 bg-slate-700/80 rounded-lg flex items-center justify-center shadow-md border border-slate-600/50 transition-all duration-200 hover:scale-105 hover:bg-slate-600/80"
+          class="w-9 h-9 bg-white/5 rounded-lg flex items-center justify-center border border-white/10 transition-all duration-200 hover:bg-white/10"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            class="h-5 w-5 text-slate-200"
+            class="h-5 w-5 text-white/90"
             viewBox="0 0 20 20"
             fill="currentColor"
           >
@@ -21,7 +19,7 @@
             />
           </svg>
         </div>
-        <h1 class="text-lg font-semibold text-slate-100">Journey Calendar</h1>
+        <h1 class="text-lg font-semibold text-white/95">Journey Calendar</h1>
       </div>
     </div>
   </nav>
