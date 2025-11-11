@@ -1,55 +1,46 @@
 <template>
-  <div class="min-h-screen bg-linear-to-br from-blue-500 to-purple-600">
-    <div class="container mx-auto px-4 py-16">
-      <div class="text-center text-white">
-        <h1 class="text-6xl font-bold mb-4">Journey Calendar</h1>
-        <p class="text-2xl mb-8">Welcome</p>
+  <div
+    class="min-h-screen bg-linear-to-br from-gray-900 via-gray-800 to-gray-900"
+  >
+    <!-- Background Effects -->
+    <div class="absolute inset-0 overflow-hidden pointer-events-none">
+      <div
+        class="absolute top-0 left-1/4 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse"
+      ></div>
+      <div
+        class="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse"
+        style="animation-delay: 1s"
+      ></div>
+    </div>
 
-        <div
-          class="bg-white rounded-lg shadow-2xl p-8 max-w-md mx-auto text-gray-800"
-        >
-          <h2 class="text-3xl font-semibold mb-6">Counter Demo w/ Pinia</h2>
-
-          <div class="text-7xl font-bold mb-6">
-            {{ count }}
-          </div>
-
-          <div class="text-2xl text-gray-600 mb-8">
-            Double: {{ doubleCount }}
-          </div>
-
-          <div class="flex gap-4 justify-center">
-            <button
-              @click="increment"
-              class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-lg transition duration-200 transform hover:scale-105"
-            >
-              +
-            </button>
-            <button
-              @click="decrement"
-              class="bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-8 rounded-lg transition duration-200 transform hover:scale-105"
-            >
-              -
-            </button>
-          </div>
-        </div>
-
-        <div class="mt-12 text-lg">
-          <p>Vue 3</p>
-          <p>Pinia (State Management)</p>
-          <p>Vue Router</p>
-          <p>TailwindCSS</p>
-        </div>
+    <!-- Main Content -->
+    <div class="relative z-10 flex-1 flex flex-col">
+      <!-- Calendar Component -->
+      <div class="flex-1 container mx-auto px-6 py-6">
+        <JourneyCalendar />
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { storeToRefs } from "pinia";
-import { useCounterStore } from "@/stores/counter";
-
-const counterStore = useCounterStore();
-const { count, doubleCount } = storeToRefs(counterStore);
-const { increment, decrement } = counterStore;
+import JourneyCalendar from "@/components/calendar/JourneyCalendar.vue";
 </script>
+
+<style scoped>
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.1);
+  }
+}
+
+.animate-pulse {
+  animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+</style>
