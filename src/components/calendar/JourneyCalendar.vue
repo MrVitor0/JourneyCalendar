@@ -1,14 +1,13 @@
 <template>
   <div class="journey-calendar h-full flex flex-col">
-    <CalendarHeader />
-    <div class="flex gap-6 mt-6 flex-1">
+    <div class="flex gap-6 flex-1 overflow-hidden">
       <!-- Sidebar - Left -->
-      <div class="w-72 shrink-0">
+      <div class="w-80 shrink-0 flex flex-col overflow-hidden">
         <CalendarSidebar />
       </div>
 
-      <!-- Main Calendar Area - Right (Highlighted) -->
-      <div class="flex-1">
+      <!-- Main Calendar Area - Right -->
+      <div class="flex-1 min-w-0 overflow-auto">
         <CalendarGrid />
       </div>
     </div>
@@ -16,7 +15,6 @@
 </template>
 
 <script setup>
-import CalendarHeader from "./CalendarHeader.vue";
 import CalendarGrid from "./CalendarGrid.vue";
 import CalendarSidebar from "./CalendarSidebar.vue";
 </script>
