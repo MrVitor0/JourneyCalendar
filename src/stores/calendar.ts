@@ -11,9 +11,14 @@ import {
   isSameMonth,
   isSameDay,
   isToday,
-  parseISO,
 } from "date-fns";
-import type { CalendarEvent, Calendar, ViewMode } from "@/types/calendar";
+import type {
+  CalendarEvent,
+  Calendar,
+  ViewMode,
+  CreateEventInput,
+  UpdateEventInput,
+} from "@/types/calendar";
 
 interface CalendarStoreState {
   currentDate: Date;
@@ -24,10 +29,71 @@ interface CalendarStoreState {
   calendars: Calendar[];
 }
 
+const STORAGE_KEY = "journey-calendar-events";
+const CALENDARS_STORAGE_KEY = "journey-calendar-calendars";
+
+/**
+ * Load events from localStorage
+ */
+const loadEventsFromStorage = (): CalendarEvent[] => {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      return JSON.parse(stored);
+    }
+  } catch (error) {
+    console.error("Failed to load events from localStorage:", error);
+  }
+  return [];
+};
+
+/**
+ * Save events to localStorage
+ */
+const saveEventsToStorage = (events: CalendarEvent[]): void => {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(events));
+  } catch (error) {
+    console.error("Failed to save events to localStorage:", error);
+  }
+};
+
+/**
+ * Load calendars from localStorage
+ */
+const loadCalendarsFromStorage = (): Calendar[] => {
+  try {
+    const stored = localStorage.getItem(CALENDARS_STORAGE_KEY);
+    if (stored) {
+      return JSON.parse(stored);
+    }
+  } catch (error) {
+    console.error("Failed to load calendars from localStorage:", error);
+  }
+  return [
+    { id: "work", name: "Work", color: "gray", visible: true },
+    { id: "personal", name: "Personal", color: "blue", visible: true },
+    { id: "birthdays", name: "Birthdays", color: "green", visible: true },
+    { id: "tasks", name: "Tasks", color: "red", visible: true },
+  ];
+};
+
+/**
+ * Save calendars to localStorage
+ */
+const saveCalendarsToStorage = (calendars: Calendar[]): void => {
+  try {
+    localStorage.setItem(CALENDARS_STORAGE_KEY, JSON.stringify(calendars));
+  } catch (error) {
+    console.error("Failed to save calendars to localStorage:", error);
+  }
+};
+
 /**
  * Calendar Store
  * Manages calendar state including current view, selected dates, and events
- * Follows Single Responsibility Principle by handling only calendar-related state
+ * Implements CRUD operations with localStorage persistence
+ * Follows Single Responsibility Principle
  */
 export const useCalendarStore = defineStore("calendar", {
   state: (): CalendarStoreState => ({
@@ -35,50 +101,8 @@ export const useCalendarStore = defineStore("calendar", {
     selectedDate: null,
     viewMode: "month",
     showWeekends: true,
-    events: [
-      {
-        id: "1",
-        title: "Apex Innovations - Daily Stan",
-        startDate: "2026-05-04T12:00:00",
-        endDate: "2026-05-04T13:00:00",
-        color: "gray",
-        calendar: "Work",
-        weather: "sunny",
-      },
-      {
-        id: "2",
-        title: "Pagamento de Luz e Gás",
-        startDate: "2026-05-05T00:00:00",
-        endDate: "2026-05-05T23:59:59",
-        color: "blue",
-        calendar: "Personal",
-        weather: "cloudy",
-      },
-      {
-        id: "3",
-        title: "Dia das Mães",
-        startDate: "2026-05-10T00:00:00",
-        endDate: "2026-05-10T23:59:59",
-        color: "purple",
-        calendar: "Personal",
-        weather: "sunny",
-      },
-      {
-        id: "4",
-        title: "Dia do Trabalho",
-        startDate: "2026-05-01T00:00:00",
-        endDate: "2026-05-01T23:59:59",
-        color: "purple",
-        calendar: "Personal",
-        weather: "rainy",
-      },
-    ],
-    calendars: [
-      { id: "work", name: "Work", color: "gray", visible: true },
-      { id: "personal", name: "Personal", color: "blue", visible: true },
-      { id: "birthdays", name: "Birthdays", color: "green", visible: true },
-      { id: "tasks", name: "Tasks", color: "red", visible: true },
-    ],
+    events: loadEventsFromStorage(),
+    calendars: loadCalendarsFromStorage(),
   }),
 
   getters: {
@@ -161,11 +185,8 @@ export const useCalendarStore = defineStore("calendar", {
     getEventsForDate:
       (state) =>
       (date: Date): CalendarEvent[] => {
-        return state.events.filter((event) => {
-          const eventStart = parseISO(event.startDate);
-          const eventEnd = parseISO(event.endDate);
-          return date >= eventStart && date <= eventEnd;
-        });
+        const dateStr = format(date, "yyyy-MM-dd");
+        return state.events.filter((event) => event.date === dateStr);
       },
 
     /**
@@ -208,14 +229,41 @@ export const useCalendarStore = defineStore("calendar", {
      * Get filtered events based on visible calendars
      */
     visibleEvents: (state): CalendarEvent[] => {
-      const visibleCalendarNames = state.calendars
+      const visibleCalendarIds = state.calendars
         .filter((cal) => cal.visible)
-        .map((cal) => cal.name);
+        .map((cal) => cal.id);
 
       return state.events.filter((event) =>
-        visibleCalendarNames.includes(event.calendar)
+        visibleCalendarIds.includes(event.calendar)
       );
     },
+
+    /**
+     * Get event by ID
+     */
+    getEventById:
+      (state) =>
+      (id: string): CalendarEvent | undefined => {
+        return state.events.find((event) => event.id === id);
+      },
+
+    /**
+     * Get all events for a specific date (filtered by visible calendars)
+     */
+    getVisibleEventsForDate:
+      (state) =>
+      (date: Date): CalendarEvent[] => {
+        const dateStr = format(date, "yyyy-MM-dd");
+        const visibleCalendarIds = state.calendars
+          .filter((cal) => cal.visible)
+          .map((cal) => cal.id);
+
+        return state.events.filter(
+          (event) =>
+            event.date === dateStr &&
+            visibleCalendarIds.includes(event.calendar)
+        );
+      },
   },
 
   actions: {
@@ -270,43 +318,91 @@ export const useCalendarStore = defineStore("calendar", {
     },
 
     /**
-     * Add a new event
+     * Create a new event
+     * Generates unique ID and timestamps, then persists to storage
      */
-    addEvent(event: Omit<CalendarEvent, "id">): void {
+    createEvent(input: CreateEventInput): CalendarEvent {
+      const now = new Date().toISOString();
       const newEvent: CalendarEvent = {
-        id: Date.now().toString(),
-        ...event,
+        id: `event-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        ...input,
+        createdAt: now,
+        updatedAt: now,
       };
+
       this.events.push(newEvent);
+      saveEventsToStorage(this.events);
+      return newEvent;
     },
 
     /**
      * Update an existing event
+     * Updates timestamps and persists changes
      */
-    updateEvent(id: string, updates: Partial<CalendarEvent>): void {
-      const index = this.events.findIndex((e) => e.id === id);
-      if (index !== -1) {
-        this.events[index] = { ...this.events[index], ...updates };
+    updateEvent(input: UpdateEventInput): CalendarEvent | null {
+      const index = this.events.findIndex((e) => e.id === input.id);
+      if (index === -1) {
+        return null;
       }
+
+      const { id, ...updates } = input;
+      this.events[index] = {
+        ...this.events[index],
+        ...updates,
+        updatedAt: new Date().toISOString(),
+      };
+
+      saveEventsToStorage(this.events);
+      return this.events[index];
     },
 
     /**
-     * Delete an event
+     * Delete a single event by ID
      */
-    deleteEvent(id: string): void {
+    deleteEvent(id: string): boolean {
       const index = this.events.findIndex((e) => e.id === id);
-      if (index !== -1) {
-        this.events.splice(index, 1);
+      if (index === -1) {
+        return false;
       }
+
+      this.events.splice(index, 1);
+      saveEventsToStorage(this.events);
+      return true;
     },
 
     /**
-     * Toggle calendar visibility
+     * Delete all events for a specific date
+     */
+    deleteEventsForDate(date: Date): number {
+      const dateStr = format(date, "yyyy-MM-dd");
+      const initialLength = this.events.length;
+
+      this.events = this.events.filter((event) => event.date !== dateStr);
+
+      const deletedCount = initialLength - this.events.length;
+      if (deletedCount > 0) {
+        saveEventsToStorage(this.events);
+      }
+
+      return deletedCount;
+    },
+
+    /**
+     * Delete all events
+     */
+    clearAllEvents(): void {
+      this.events = [];
+      saveEventsToStorage(this.events);
+    },
+
+    /**
+     * Toggle calendar visibility and persist
      */
     toggleCalendarVisibility(calendarId: string): void {
       const calendar = this.calendars.find((cal) => cal.id === calendarId);
       if (calendar) {
         calendar.visible = !calendar.visible;
+        saveCalendarsToStorage(this.calendars);
       }
     },
   },

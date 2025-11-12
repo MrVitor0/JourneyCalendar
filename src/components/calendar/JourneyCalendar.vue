@@ -10,15 +10,35 @@
 
       <!-- Main Calendar Area - Right -->
       <div class="flex-1 min-w-0 overflow-auto">
-        <CalendarGrid @date-click="handleDateClick" />
+        <CalendarGrid
+          @date-click="handleDateClick"
+          @event-click="handleEventClick"
+          @view-more="handleViewMore"
+        />
       </div>
     </div>
 
-    <!-- Reminder Modal -->
+    <!-- Create/Edit Reminder Modal -->
     <ReminderModal
       v-model="isReminderModalOpen"
       :selected-date="selectedDate"
       @created="handleReminderCreated"
+    />
+
+    <!-- Event Details Modal -->
+    <EventDetailsModal
+      v-model="isEventDetailsModalOpen"
+      :event-id="selectedEventId"
+      @updated="handleEventUpdated"
+      @deleted="handleEventDeleted"
+    />
+
+    <!-- Day Events Modal (View All Events for a Day) -->
+    <DayEventsModal
+      v-model="isDayEventsModalOpen"
+      :date="selectedDateForView"
+      @event-click="handleEventClickFromDayView"
+      @events-deleted="handleEventsDeleted"
     />
   </div>
 </template>
@@ -28,16 +48,82 @@ import { ref } from "vue";
 import CalendarGrid from "./CalendarGrid.vue";
 import CalendarSidebar from "./CalendarSidebar.vue";
 import ReminderModal from "@/components/common/ReminderModal.vue";
+import EventDetailsModal from "@/components/common/EventDetailsModal.vue";
+import DayEventsModal from "@/components/common/DayEventsModal.vue";
 
+// Create Reminder Modal State
 const isReminderModalOpen = ref(false);
 const selectedDate = ref<Date | null>(null);
 
+// Event Details Modal State
+const isEventDetailsModalOpen = ref(false);
+const selectedEventId = ref<string | null>(null);
+
+// Day Events Modal State
+const isDayEventsModalOpen = ref(false);
+const selectedDateForView = ref<Date | null>(null);
+
+/**
+ * Handle day click - open create reminder modal
+ */
 const handleDateClick = (date: Date): void => {
   selectedDate.value = date;
   isReminderModalOpen.value = true;
 };
 
+/**
+ * Handle event click - open event details modal
+ */
+const handleEventClick = (eventId: string): void => {
+  selectedEventId.value = eventId;
+  isEventDetailsModalOpen.value = true;
+};
+
+/**
+ * Handle view more click - open day events modal
+ */
+const handleViewMore = (date: Date): void => {
+  selectedDateForView.value = date;
+  isDayEventsModalOpen.value = true;
+};
+
+/**
+ * Handle event click from day events modal
+ * Close day events modal and open event details modal
+ */
+const handleEventClickFromDayView = (eventId: string): void => {
+  isDayEventsModalOpen.value = false;
+  selectedEventId.value = eventId;
+  isEventDetailsModalOpen.value = true;
+};
+
+/**
+ * Handle reminder created
+ */
 const handleReminderCreated = (): void => {
   selectedDate.value = null;
+};
+
+/**
+ * Handle event updated
+ */
+const handleEventUpdated = (): void => {
+  // Event is automatically updated in store
+  // Modal will remain open unless closed by user
+};
+
+/**
+ * Handle event deleted
+ */
+const handleEventDeleted = (): void => {
+  selectedEventId.value = null;
+};
+
+/**
+ * Handle events deleted from day view
+ */
+const handleEventsDeleted = (): void => {
+  // Events are automatically deleted in store
+  // Modal will close automatically if no events remain
 };
 </script>

@@ -9,7 +9,7 @@
         !isSelected &&
         'ring-2 ring-purple-400 bg-purple-500/10 border-purple-400/50',
     ]"
-    @click="handleClick"
+    @click="handleDayClick"
   >
     <!-- Day Number -->
     <div class="flex justify-between items-start mb-1 sm:mb-2">
@@ -32,19 +32,23 @@
         v-for="event in displayedEvents"
         :key="event.id"
         :class="[
-          'text-[0.625rem] sm:text-xs px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-md sm:rounded-lg truncate font-medium shadow-sm',
+          'text-[0.625rem] sm:text-xs px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-md sm:rounded-lg truncate font-medium shadow-sm transition-all',
           getEventColorClass(event.color),
+          'hover:scale-105',
         ]"
-        :title="event.title"
+        :title="`${event.title} - ${event.time}`"
+        @click.stop="handleEventClick(event.id)"
       >
-        {{ event.title }}
+        <span class="font-semibold mr-1">{{ event.time }}</span>
+        <span>{{ event.title }}</span>
       </div>
-      <div
+      <button
         v-if="events.length > maxDisplayedEvents"
-        class="text-[0.625rem] sm:text-xs px-1.5 sm:px-2 py-0.5 text-gray-400 font-medium"
+        @click.stop="handleViewMore"
+        class="text-[0.625rem] sm:text-xs px-1.5 sm:px-2 py-0.5 text-blue-400 hover:text-blue-300 font-medium hover:bg-blue-500/10 rounded-md transition-all w-full text-left"
       >
         +{{ events.length - maxDisplayedEvents }} more
-      </div>
+      </button>
     </div>
   </div>
 </template>
@@ -71,6 +75,8 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<{
   select: [date: Date];
+  eventClick: [eventId: string];
+  viewMore: [date: Date];
 }>();
 
 const maxDisplayedEvents = 2;
@@ -81,8 +87,30 @@ const displayedEvents = computed(() => {
   return props.events.slice(0, maxDisplayedEvents);
 });
 
-const handleClick = (): void => {
-  emit("select", props.date);
+/**
+ * Handle day click - emit for creating new event
+ */
+const handleDayClick = (): void => {
+  // If there are many events, show them all instead of creating new
+  if (props.events.length > maxDisplayedEvents) {
+    handleViewMore();
+  } else {
+    emit("select", props.date);
+  }
+};
+
+/**
+ * Handle event click - open event details
+ */
+const handleEventClick = (eventId: string): void => {
+  emit("eventClick", eventId);
+};
+
+/**
+ * Handle view more click - show all day events
+ */
+const handleViewMore = (): void => {
+  emit("viewMore", props.date);
 };
 
 /**

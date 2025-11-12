@@ -276,16 +276,10 @@ const handleSubmit = async (): Promise<void> => {
   isSubmitting.value = true;
 
   try {
+    // Pass data to parent component for handling
     emit("submit", { ...formData.value });
 
-    toastStore.success(
-      "Reminder Saved",
-      `"${formData.value.title}" has been ${
-        props.initialData ? "updated" : "created"
-      } successfully`
-    );
-
-    // Reset form if not editing
+    // Reset form if not editing (creating new event)
     if (!props.initialData) {
       formData.value = {
         title: "",

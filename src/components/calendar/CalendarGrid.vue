@@ -122,8 +122,10 @@
         :is-current-month="isDateInCurrentMonth(day)"
         :is-selected="isDateSelected(day)"
         :is-today="isDateToday(day)"
-        :events="getEventsForDate(day)"
+        :events="getVisibleEventsForDate(day)"
         @select="handleDateSelect"
+        @event-click="handleEventClick"
+        @view-more="handleViewMore"
       />
     </div>
   </div>
@@ -136,6 +138,8 @@ import CalendarDay from "./CalendarDay.vue";
 
 interface CalendarGridEmits {
   (e: "date-click", date: Date): void;
+  (e: "event-click", eventId: string): void;
+  (e: "view-more", date: Date): void;
 }
 
 const emit = defineEmits<CalendarGridEmits>();
@@ -151,7 +155,7 @@ const {
 } = storeToRefs(calendarStore);
 
 const {
-  getEventsForDate,
+  getVisibleEventsForDate,
   isDateInCurrentMonth,
   isDateSelected,
   isDateToday,
@@ -165,5 +169,13 @@ const {
 const handleDateSelect = (date: Date): void => {
   selectDate(date);
   emit("date-click", date);
+};
+
+const handleEventClick = (eventId: string): void => {
+  emit("event-click", eventId);
+};
+
+const handleViewMore = (date: Date): void => {
+  emit("view-more", date);
 };
 </script>

@@ -9,16 +9,40 @@ export type ColorType =
   | "yellow"
   | "orange";
 
+/**
+ * Calendar Event Interface
+ * Represents a single event in the calendar system
+ */
 export interface CalendarEvent {
   id: string;
   title: string;
-  startDate: string;
-  endDate: string;
+  date: string; // YYYY-MM-DD format
+  time: string; // HH:mm format
+  city: string;
+  calendar: string; // Calendar ID reference
   color: ColorType;
+  weather?: WeatherType; // Optional: to be fetched based on city
+  createdAt: string; // ISO timestamp
+  updatedAt: string; // ISO timestamp
+}
+
+/**
+ * Input data for creating/updating events
+ */
+export interface CreateEventInput {
+  title: string;
+  date: string;
+  time: string;
+  city: string;
   calendar: string;
-  weather: WeatherType;
-  city?: string;
-  time?: string;
+  color: ColorType;
+}
+
+/**
+ * Update event input (all fields optional except id)
+ */
+export interface UpdateEventInput extends Partial<CreateEventInput> {
+  id: string;
 }
 
 export interface Calendar {

@@ -14,6 +14,7 @@
 import { computed } from "vue";
 import { storeToRefs } from "pinia";
 import { useCalendarStore } from "@/stores/calendar";
+import { useToastStore } from "@/stores/toast";
 import Modal from "@/components/common/Modal.vue";
 import ReminderForm from "@/components/common/ReminderForm.vue";
 import type { ReminderFormData } from "@/types/components";
@@ -33,8 +34,8 @@ const props = defineProps<ReminderModalProps>();
 const emit = defineEmits<ReminderModalEmits>();
 
 const calendarStore = useCalendarStore();
-const { calendars } = storeToRefs(calendarStore);
-const { addEvent } = calendarStore;
+const toastStore = useToastStore();
+const { createEvent } = calendarStore;
 
 const isOpen = computed({
   get: () => props.modelValue,
@@ -53,22 +54,20 @@ const initialFormData = computed(() => {
 });
 
 const handleSubmit = (formData: ReminderFormData): void => {
-  const selectedCalendar = calendars.value.find(
-    (c) => c.id === formData.calendar
+  createEvent({
+    title: formData.title,
+    date: formData.date,
+    time: formData.time,
+    city: formData.city,
+    calendar: formData.calendar,
+    color: formData.color as ColorType,
+  });
+
+  toastStore.success(
+    "Event Created",
+    `"${formData.title}" has been created successfully`
   );
 
-  const eventData = {
-    title: formData.title,
-    startDate: `${formData.date}T${formData.time}:00`,
-    endDate: `${formData.date}T${formData.time}:00`,
-    calendar: selectedCalendar?.name || "Personal",
-    color: formData.color,
-    weather: "sunny" as const,
-    city: formData.city,
-    time: formData.time,
-  };
-
-  addEvent(eventData);
   isOpen.value = false;
   emit("created");
 };
