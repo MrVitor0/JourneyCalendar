@@ -58,19 +58,23 @@ const views = [
 
 const handleQuickAction = (action: string): void => {
   switch (action) {
-    case "today":
+    case "today": {
       goToToday();
       break;
-    case "event":
+    }
+    case "event": {
       currentView.value = "event";
       break;
-    case "week":
+    }
+    case "week": {
       const viewMode = calendarStore.viewMode;
       setViewMode(viewMode === "month" ? "week" : "month");
       break;
-    case "refresh":
+    }
+    case "refresh": {
       location.reload();
       break;
+    }
   }
 };
 

@@ -14,7 +14,7 @@
   >
     <!-- Day Number and Weather -->
     <div class="flex justify-between items-start mb-1 sm:mb-2">
-      <div class="flex items-center gap-1.5">
+      <div class="flex items-center gap-1">
         <span
           :class="[
             'text-sm sm:text-base lg:text-lg font-bold',
@@ -27,20 +27,21 @@
           {{ dayNumber }}
         </span>
 
-        <!-- Weather Icon (compact) -->
+        <!-- Weather Icons (multiple unique types) -->
         <div
-          v-if="firstEventWithWeather"
+          v-for="weatherType in uniqueWeatherTypes"
+          :key="weatherType"
           :class="[
-            'w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center shrink-0',
-            getWeatherStyle(firstEventWithWeather.weather!.type).bgClass,
+            'w-4 h-4 sm:w-5 sm:h-5 rounded-full flex items-center justify-center shrink-0',
+            getWeatherStyle(weatherType).bgClass,
           ]"
-          :title="`${getWeatherStyle(firstEventWithWeather.weather!.type).label}: ${firstEventWithWeather.weather!.temperatureMin}°C - ${firstEventWithWeather.weather!.temperatureMax}°C`"
+          :title="getWeatherTypesTitle(weatherType)"
         >
           <component
-            :is="getWeatherStyle(firstEventWithWeather.weather!.type).icon"
+            :is="getWeatherStyle(weatherType).icon"
             :class="[
-              'w-3 h-3 sm:w-3.5 sm:h-3.5',
-              getWeatherStyle(firstEventWithWeather.weather!.type).iconClass,
+              'w-2.5 h-2.5 sm:w-3 sm:h-3',
+              getWeatherStyle(weatherType).iconClass,
             ]"
           />
         </div>
@@ -170,11 +171,42 @@ const displayedEvents = computed(() => {
 });
 
 /**
- * Get first event with weather data
+ * Get unique weather types from all events in this day
+ * Only returns distinct weather types (no duplicates)
  */
-const firstEventWithWeather = computed(() => {
-  return props.events.find((event) => event.weather);
+const uniqueWeatherTypes = computed(() => {
+  const weatherTypes = props.events
+    .filter((event) => event.weather)
+    .map((event) => event.weather!.type);
+
+  // Return unique weather types
+  return [...new Set(weatherTypes)];
 });
+
+/**
+ * Get title with all cities for a specific weather type
+ */
+const getWeatherTypesTitle = (weatherType: WeatherType): string => {
+  const eventsWithType = props.events.filter(
+    (event) => event.weather?.type === weatherType
+  );
+
+  if (eventsWithType.length === 0) return "";
+
+  const cities = eventsWithType.map((event) => event.city);
+  const temps = eventsWithType.map(
+    (event) =>
+      `${event.weather!.temperatureMin}°C - ${event.weather!.temperatureMax}°C`
+  );
+
+  const weatherLabel = getWeatherStyle(weatherType).label;
+
+  if (eventsWithType.length === 1) {
+    return `${weatherLabel} in ${cities[0]}: ${temps[0]}`;
+  }
+
+  return `${weatherLabel} in ${cities.join(", ")}`;
+};
 
 /**
  * Get weather icon and styles based on weather type

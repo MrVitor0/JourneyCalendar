@@ -1,15 +1,71 @@
 <!DOCTYPE html>
-<html lang="">
+<html lang="en">
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <link rel="icon" href="<%= BASE_URL %>favicon.ico">
-    <title><%= htmlWebpackPlugin.options.title %></title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="<%= BASE_URL %>favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="<%= BASE_URL %>favicon.svg" />
+    <link rel="apple-touch-icon" href="<%= BASE_URL %>favicon.svg" />
+
+    <!-- Primary Meta Tags -->
+    <title>Journey Calendar - Modern Calendar & Reminder App</title>
+    <meta
+      name="title"
+      content="Journey Calendar - Modern Calendar & Reminder App"
+    />
+    <meta
+      name="description"
+      content="A modern, feature-rich calendar application with reminders, weather integration, and multi-calendar support. Organize your life with an intuitive interface and smart features."
+    />
+    <meta
+      name="keywords"
+      content="calendar, reminder, weather, schedule, organizer, planning, productivity, vue, typescript"
+    />
+    <meta name="author" content="Journey Calendar" />
+    <meta name="theme-color" content="#6366f1" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://journeycalendar.app/" />
+    <meta
+      property="og:title"
+      content="Journey Calendar - Modern Calendar & Reminder App"
+    />
+    <meta
+      property="og:description"
+      content="A modern, feature-rich calendar application with reminders, weather integration, and multi-calendar support. Organize your life with an intuitive interface and smart features."
+    />
+    <meta property="og:image" content="<%= BASE_URL %>favicon.svg" />
+    <meta property="og:site_name" content="Journey Calendar" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://journeycalendar.app/" />
+    <meta
+      property="twitter:title"
+      content="Journey Calendar - Modern Calendar & Reminder App"
+    />
+    <meta
+      property="twitter:description"
+      content="A modern, feature-rich calendar application with reminders, weather integration, and multi-calendar support. Organize your life with an intuitive interface and smart features."
+    />
+    <meta property="twitter:image" content="<%= BASE_URL %>favicon.svg" />
+
+    <!-- Additional SEO -->
+    <meta name="robots" content="index, follow" />
+    <meta name="language" content="English" />
+    <meta name="revisit-after" content="7 days" />
+    <link rel="canonical" href="https://journeycalendar.app/" />
   </head>
   <body>
     <noscript>
-      <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
+      <strong
+        >We're sorry but Journey Calendar doesn't work properly without
+        JavaScript enabled. Please enable it to continue.</strong
+      >
     </noscript>
     <div id="app"></div>
     <!-- built files will be auto injected -->
