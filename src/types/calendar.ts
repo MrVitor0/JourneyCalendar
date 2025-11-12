@@ -17,7 +17,6 @@ export interface CalendarEvent {
   color: ColorType;
   calendar: string;
   weather: WeatherType;
-  amount: number | null;
   city?: string;
   time?: string;
 }

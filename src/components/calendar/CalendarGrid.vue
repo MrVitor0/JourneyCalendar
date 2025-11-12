@@ -101,7 +101,7 @@
         :is-selected="isDateSelected(day)"
         :is-today="isDateToday(day)"
         :events="getEventsForDate(day)"
-        @select="selectDate"
+        @select="handleDateSelect"
       />
     </div>
   </div>
@@ -111,6 +111,12 @@
 import { storeToRefs } from "pinia";
 import { useCalendarStore } from "@/stores/calendar";
 import CalendarDay from "./CalendarDay.vue";
+
+interface CalendarGridEmits {
+  (e: "date-click", date: Date): void;
+}
+
+const emit = defineEmits<CalendarGridEmits>();
 
 const calendarStore = useCalendarStore();
 
@@ -128,6 +134,11 @@ const {
   goToToday,
   setViewMode,
 } = calendarStore;
+
+const handleDateSelect = (date: Date): void => {
+  selectDate(date);
+  emit("date-click", date);
+};
 
 const weekDays: string[] = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
 </script>

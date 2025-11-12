@@ -23,7 +23,6 @@ export interface NewEventForm {
   city: string;
   weather: string;
   calendar: string;
-  amount: string;
 }
 
 export interface ReminderFormData {
@@ -32,4 +31,5 @@ export interface ReminderFormData {
   time: string;
   city: string;
   calendar: string;
+  color: import("@/types/calendar").ColorType;
 }

@@ -12,6 +12,7 @@
         <component :is="icon" class="w-4 h-4" />
       </div>
       <input
+        ref="inputRef"
         :value="modelValue"
         @input="handleInput"
         :type="type"
@@ -19,6 +20,7 @@
         :maxlength="maxLength"
         :required="required"
         :disabled="disabled"
+        :autofocus="autofocus"
         :class="[
           'w-full bg-gray-800/60 rounded-xl py-3 border border-white/10 focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20 transition-all outline-none text-sm text-gray-200 placeholder-gray-500',
           icon ? 'pl-10 pr-4' : 'px-4',
@@ -41,6 +43,8 @@
 </template>
 
 <script setup lang="ts">
+import { ref, onMounted } from "vue";
+
 interface TextInputProps {
   modelValue: string;
   label?: string;
@@ -53,6 +57,7 @@ interface TextInputProps {
   disabled?: boolean;
   error?: string;
   hint?: string;
+  autofocus?: boolean;
 }
 
 interface TextInputEmits {
@@ -64,7 +69,10 @@ const props = withDefaults(defineProps<TextInputProps>(), {
   showCounter: false,
   required: false,
   disabled: false,
+  autofocus: false,
 });
+
+const inputRef = ref<HTMLInputElement | null>(null);
 
 const emit = defineEmits<TextInputEmits>();
 
@@ -72,4 +80,12 @@ const handleInput = (event: Event): void => {
   const target = event.target as HTMLInputElement;
   emit("update:modelValue", target.value);
 };
+
+onMounted(() => {
+  if (props.autofocus && inputRef.value) {
+    setTimeout(() => {
+      inputRef.value?.focus();
+    }, 100);
+  }
+});
 </script>

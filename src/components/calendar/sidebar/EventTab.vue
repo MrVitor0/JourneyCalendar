@@ -44,9 +44,8 @@ const handleCreateReminder = (formData: ReminderFormData): void => {
     startDate: `${formData.date}T${formData.time}:00`,
     endDate: `${formData.date}T${formData.time}:00`,
     calendar: selectedCalendar?.name || "Personal",
-    color: (selectedCalendar?.color as ColorType) || "blue",
+    color: formData.color,
     weather: "sunny" as const,
-    amount: null,
     city: formData.city,
     time: formData.time,
   };

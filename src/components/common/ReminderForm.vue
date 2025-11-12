@@ -11,23 +11,25 @@
       :required="true"
       :error="errors.title"
       hint="Max 30 characters"
+      :autofocus="true"
     />
 
-    <!-- Date Input -->
-    <DateInput
-      v-model="formData.date"
-      label="Date"
-      :required="true"
-      :error="errors.date"
-    />
+    <!-- Date and Time Inputs (side by side if in modal) -->
+    <div :class="showCancel ? 'grid grid-cols-2 gap-3' : 'space-y-4'">
+      <DateInput
+        v-model="formData.date"
+        label="Date"
+        :required="true"
+        :error="errors.date"
+      />
 
-    <!-- Time Input -->
-    <TimeInput
-      v-model="formData.time"
-      label="Time"
-      :required="true"
-      :error="errors.time"
-    />
+      <TimeInput
+        v-model="formData.time"
+        label="Time"
+        :required="true"
+        :error="errors.time"
+      />
+    </div>
 
     <!-- City Input -->
     <TextInput
@@ -40,14 +42,23 @@
       hint="Weather will be fetched automatically"
     />
 
-    <!-- Calendar Select -->
-    <CircleSelect
-      v-model="formData.calendar"
-      :options="calendarOptions"
-      label="Calendar"
-      placeholder="Select calendar"
-      :error="errors.calendar"
-    />
+    <!-- Calendar and Color Selects (side by side) -->
+    <div class="grid grid-cols-2 gap-3">
+      <CircleSelect
+        v-model="formData.calendar"
+        :options="calendarOptions"
+        label="Calendar"
+        placeholder="Select calendar"
+        :error="errors.calendar"
+      />
+
+      <ColorSelect
+        v-model="formData.color"
+        label="Color"
+        placeholder="Select color"
+        :error="errors.color"
+      />
+    </div>
 
     <!-- Action Buttons -->
     <div class="flex gap-3">
@@ -87,6 +98,7 @@ import TextInput from "@/components/common/TextInput.vue";
 import DateInput from "@/components/common/DateInput.vue";
 import TimeInput from "@/components/common/TimeInput.vue";
 import CircleSelect from "@/components/common/CircleSelect.vue";
+import ColorSelect from "@/components/common/ColorSelect.vue";
 import {
   Type,
   MapPin,
@@ -129,6 +141,7 @@ const formData = ref<ReminderFormData>({
   time: "12:00",
   city: "",
   calendar: "personal",
+  color: "blue",
   ...props.initialData,
 });
 
@@ -236,6 +249,12 @@ const validateForm = (): boolean => {
     isValid = false;
   }
 
+  if (!formData.value.color) {
+    errors.value.color = "Color is required";
+    errorMessages.push("Color is required");
+    isValid = false;
+  }
+
   if (!isValid) {
     const errorCount = errorMessages.length;
     const message =
@@ -274,6 +293,7 @@ const handleSubmit = async (): Promise<void> => {
         time: "12:00",
         city: "",
         calendar: "personal",
+        color: "blue",
       };
       errors.value = {};
     }

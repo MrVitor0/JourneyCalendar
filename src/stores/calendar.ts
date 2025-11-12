@@ -42,7 +42,6 @@ export const useCalendarStore = defineStore("calendar", {
         color: "gray",
         calendar: "Work",
         weather: "sunny",
-        amount: null,
       },
       {
         id: "2",
@@ -52,7 +51,6 @@ export const useCalendarStore = defineStore("calendar", {
         color: "blue",
         calendar: "Personal",
         weather: "cloudy",
-        amount: 150.5,
       },
       {
         id: "3",
@@ -62,7 +60,6 @@ export const useCalendarStore = defineStore("calendar", {
         color: "purple",
         calendar: "Personal",
         weather: "sunny",
-        amount: null,
       },
       {
         id: "4",
@@ -72,7 +69,6 @@ export const useCalendarStore = defineStore("calendar", {
         color: "purple",
         calendar: "Personal",
         weather: "rainy",
-        amount: null,
       },
     ],
     calendars: [

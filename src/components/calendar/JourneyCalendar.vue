@@ -10,13 +10,34 @@
 
       <!-- Main Calendar Area - Right -->
       <div class="flex-1 min-w-0 overflow-auto">
-        <CalendarGrid />
+        <CalendarGrid @date-click="handleDateClick" />
       </div>
     </div>
+
+    <!-- Reminder Modal -->
+    <ReminderModal
+      v-model="isReminderModalOpen"
+      :selected-date="selectedDate"
+      @created="handleReminderCreated"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
+import { ref } from "vue";
 import CalendarGrid from "./CalendarGrid.vue";
 import CalendarSidebar from "./CalendarSidebar.vue";
+import ReminderModal from "@/components/common/ReminderModal.vue";
+
+const isReminderModalOpen = ref(false);
+const selectedDate = ref<Date | null>(null);
+
+const handleDateClick = (date: Date): void => {
+  selectedDate.value = date;
+  isReminderModalOpen.value = true;
+};
+
+const handleReminderCreated = (): void => {
+  selectedDate.value = null;
+};
 </script>

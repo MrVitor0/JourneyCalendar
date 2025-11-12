@@ -1,7 +1,7 @@
 <template>
   <Teleport to="body">
     <div
-      class="fixed top-4 right-4 z-[9999] flex flex-col gap-3 pointer-events-none"
+      class="fixed top-4 right-4 z-9999 flex flex-col gap-3 pointer-events-none"
       role="region"
       aria-label="Notifications"
     >
