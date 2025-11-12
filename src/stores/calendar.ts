@@ -19,6 +19,7 @@ interface CalendarStoreState {
   currentDate: Date;
   selectedDate: Date | null;
   viewMode: ViewMode;
+  showWeekends: boolean;
   events: CalendarEvent[];
   calendars: Calendar[];
 }
@@ -33,6 +34,7 @@ export const useCalendarStore = defineStore("calendar", {
     currentDate: new Date(),
     selectedDate: null,
     viewMode: "month",
+    showWeekends: true,
     events: [
       {
         id: "1",
@@ -88,10 +90,32 @@ export const useCalendarStore = defineStore("calendar", {
     },
 
     /**
-     * Get all days to display in the current month view
-     * Includes days from previous and next months to fill the grid
+     * Get all days to display based on current view mode
+     * Month view: Shows full month grid with padding days
+     * Week view: Shows only current week
      */
     calendarDays: (state): Date[] => {
+      if (state.viewMode === "week") {
+        const weekStart = startOfWeek(state.currentDate, { weekStartsOn: 0 });
+        const weekEnd = endOfWeek(state.currentDate, { weekStartsOn: 0 });
+
+        const days: Date[] = [];
+        let currentDay = weekStart;
+
+        while (currentDay <= weekEnd) {
+          const dayOfWeek = currentDay.getDay();
+          const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+
+          if (state.showWeekends || !isWeekend) {
+            days.push(currentDay);
+          }
+          currentDay = addDays(currentDay, 1);
+        }
+
+        return days;
+      }
+
+      // Month view
       const monthStart = startOfMonth(state.currentDate);
       const monthEnd = endOfMonth(state.currentDate);
       const startDate = startOfWeek(monthStart, { weekStartsOn: 0 });
@@ -101,11 +125,34 @@ export const useCalendarStore = defineStore("calendar", {
       let currentDay = startDate;
 
       while (currentDay <= endDate) {
-        days.push(currentDay);
+        const dayOfWeek = currentDay.getDay();
+        const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+
+        if (state.showWeekends || !isWeekend) {
+          days.push(currentDay);
+        }
         currentDay = addDays(currentDay, 1);
       }
 
       return days;
+    },
+
+    /**
+     * Get weekday headers based on showWeekends setting
+     */
+    weekDayHeaders: (state): string[] => {
+      const allDays = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
+      if (state.showWeekends) {
+        return allDays;
+      }
+      return allDays.filter((_, index) => index !== 0 && index !== 6);
+    },
+
+    /**
+     * Get grid columns count based on showWeekends setting
+     */
+    gridColumns: (state): number => {
+      return state.showWeekends ? 7 : 5;
     },
 
     /**
@@ -206,6 +253,20 @@ export const useCalendarStore = defineStore("calendar", {
      */
     setViewMode(mode: ViewMode): void {
       this.viewMode = mode;
+    },
+
+    /**
+     * Toggle weekend visibility
+     */
+    toggleShowWeekends(): void {
+      this.showWeekends = !this.showWeekends;
+    },
+
+    /**
+     * Set weekend visibility
+     */
+    setShowWeekends(show: boolean): void {
+      this.showWeekends = show;
     },
 
     /**

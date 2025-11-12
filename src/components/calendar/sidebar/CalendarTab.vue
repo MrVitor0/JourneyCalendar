@@ -218,10 +218,10 @@ interface CalendarTabProps {
 const props = defineProps<CalendarTabProps>();
 
 const calendarStore = useCalendarStore();
-const { calendars, viewMode } = storeToRefs(calendarStore);
-const { toggleCalendarVisibility, setViewMode } = calendarStore;
+const { calendars, viewMode, showWeekends } = storeToRefs(calendarStore);
+const { toggleCalendarVisibility, setViewMode, toggleShowWeekends } =
+  calendarStore;
 
-const showWeekends = ref<boolean>(true);
 const showReminderModal = ref<boolean>(false);
 
 // Computed properties for statistics
@@ -282,10 +282,6 @@ const toggleAllCalendars = (): void => {
 
 const toggleViewMode = (): void => {
   setViewMode(viewMode.value === "month" ? "week" : "month");
-};
-
-const toggleShowWeekends = (): void => {
-  showWeekends.value = !showWeekends.value;
 };
 
 const handleReminderCreated = (): void => {

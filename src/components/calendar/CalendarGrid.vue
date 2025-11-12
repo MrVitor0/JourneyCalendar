@@ -71,19 +71,35 @@
               'px-2 sm:px-3 py-1 rounded-md text-xs sm:text-sm font-medium transition-all duration-200',
               viewMode === 'month'
                 ? 'bg-white/20 text-white'
-                : 'text-white hover:bg-white/10',
+                : 'text-gray-400 hover:bg-white/10 hover:text-white',
             ]"
           >
             Month
+          </button>
+          <button
+            @click="setViewMode('week')"
+            :class="[
+              'px-2 sm:px-3 py-1 rounded-md text-xs sm:text-sm font-medium transition-all duration-200',
+              viewMode === 'week'
+                ? 'bg-white/20 text-white'
+                : 'text-gray-400 hover:bg-white/10 hover:text-white',
+            ]"
+          >
+            Week
           </button>
         </div>
       </div>
     </div>
 
     <!-- Weekday Headers -->
-    <div class="grid grid-cols-7 gap-1 sm:gap-2 mb-2 sm:mb-4">
+    <div
+      class="grid gap-1 sm:gap-2 mb-2 sm:mb-4"
+      :style="{
+        gridTemplateColumns: `repeat(${gridColumns}, minmax(0, 1fr))`,
+      }"
+    >
       <div
-        v-for="day in weekDays"
+        v-for="day in weekDayHeaders"
         :key="day"
         class="text-center text-xs sm:text-sm font-semibold text-gray-300 py-1 sm:py-2"
       >
@@ -92,7 +108,13 @@
     </div>
 
     <!-- Calendar Grid -->
-    <div class="grid grid-cols-7 gap-1 sm:gap-2">
+    <div
+      class="grid gap-1 sm:gap-2"
+      :style="{
+        gridTemplateColumns: `repeat(${gridColumns}, minmax(0, 1fr))`,
+        minHeight: viewMode === 'month' ? '500px' : '150px',
+      }"
+    >
       <CalendarDay
         v-for="(day, index) in calendarDays"
         :key="index"
@@ -120,8 +142,13 @@ const emit = defineEmits<CalendarGridEmits>();
 
 const calendarStore = useCalendarStore();
 
-const { calendarDays, formattedMonthYear, viewMode } =
-  storeToRefs(calendarStore);
+const {
+  calendarDays,
+  formattedMonthYear,
+  viewMode,
+  weekDayHeaders,
+  gridColumns,
+} = storeToRefs(calendarStore);
 
 const {
   getEventsForDate,
@@ -139,6 +166,4 @@ const handleDateSelect = (date: Date): void => {
   selectDate(date);
   emit("date-click", date);
 };
-
-const weekDays: string[] = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
 </script>
