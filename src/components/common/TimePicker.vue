@@ -2,21 +2,41 @@
   <div class="time-picker">
     <!-- Time Display -->
     <div
-      class="flex items-center justify-center mb-2 pb-2 border-b border-white/10"
+      class="flex items-center justify-center mb-3 pb-3 border-b border-white/10"
     >
-      <div class="flex items-center gap-1.5 text-2xl font-bold text-white">
+      <div class="flex items-center gap-2 text-2xl font-bold text-white">
         <span>{{ displayHour }}</span>
         <span class="text-gray-500">:</span>
         <span>{{ displayMinute }}</span>
-        <button
-          v-if="use12Hour"
-          @click="togglePeriod"
-          type="button"
-          class="ml-1.5 px-2 py-0.5 text-xs rounded-lg bg-white/10 hover:bg-white/20 transition-all duration-200"
-        >
-          {{ period }}
-        </button>
       </div>
+    </div>
+
+    <!-- AM/PM Toggle (if 12-hour format) -->
+    <div v-if="use12Hour" class="flex gap-2 mb-3 pb-3 border-b border-white/10">
+      <button
+        @click="setPeriod('AM')"
+        type="button"
+        :class="[
+          'flex-1 py-2 px-4 rounded-lg font-semibold text-sm transition-all duration-200',
+          period === 'AM'
+            ? 'bg-linear-to-r from-blue-500 to-blue-600 text-white shadow-lg shadow-blue-500/30 ring-2 ring-blue-400/50'
+            : 'bg-white/10 text-gray-300 hover:bg-white/20',
+        ]"
+      >
+        AM
+      </button>
+      <button
+        @click="setPeriod('PM')"
+        type="button"
+        :class="[
+          'flex-1 py-2 px-4 rounded-lg font-semibold text-sm transition-all duration-200',
+          period === 'PM'
+            ? 'bg-linear-to-r from-blue-500 to-blue-600 text-white shadow-lg shadow-blue-500/30 ring-2 ring-blue-400/50'
+            : 'bg-white/10 text-gray-300 hover:bg-white/20',
+        ]"
+      >
+        PM
+      </button>
     </div>
 
     <!-- Time Selection Grid -->
@@ -144,7 +164,7 @@ interface TimePreset {
 }
 
 const props = withDefaults(defineProps<TimePickerProps>(), {
-  use12Hour: false,
+  use12Hour: true,
   minuteStep: 5,
 });
 
@@ -246,6 +266,11 @@ const selectMinute = (minute: number): void => {
 
 const togglePeriod = (): void => {
   period.value = period.value === "AM" ? "PM" : "AM";
+  updateTime();
+};
+
+const setPeriod = (newPeriod: "AM" | "PM"): void => {
+  period.value = newPeriod;
   updateTime();
 };
 

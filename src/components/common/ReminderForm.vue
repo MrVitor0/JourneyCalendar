@@ -27,6 +27,7 @@
         v-model="formData.time"
         label="Time"
         :required="true"
+        :use12Hour="true"
         :error="errors.time"
       />
     </div>

@@ -1,8 +1,8 @@
 <template>
   <div
     :class="[
-      'aspect-square sm:aspect-auto sm:min-h-20 lg:min-h-28 p-1.5 sm:p-2 lg:p-3 border border-gray-700/30 rounded-lg sm:rounded-xl transition-all duration-200 cursor-pointer flex flex-col',
-      'hover:bg-white/5 hover:border-gray-600/50 hover:shadow-lg hover:scale-[1.02]',
+      'group aspect-square sm:aspect-auto sm:min-h-20 lg:min-h-28 p-1.5 sm:p-2 lg:p-3 border border-gray-700/30 rounded-lg sm:rounded-xl transition-all duration-200 cursor-pointer flex flex-col relative',
+      'hover:bg-white/5 hover:border-gray-600/50 hover:shadow-lg',
       !isCurrentMonth && 'opacity-40',
       isSelected && 'ring-2 ring-blue-400 bg-blue-500/10 border-blue-400/50',
       isToday &&
@@ -10,6 +10,7 @@
         'ring-2 ring-purple-400 bg-purple-500/10 border-purple-400/50',
     ]"
     @click="handleDayClick"
+    @contextmenu.prevent="handleContextMenu"
   >
     <!-- Day Number -->
     <div class="flex justify-between items-start mb-1 sm:mb-2">
@@ -24,6 +25,39 @@
       >
         {{ dayNumber }}
       </span>
+
+      <!-- Context Menu Button (visible on hover if there are events) -->
+      <button
+        v-if="events.length > 0"
+        @click.stop="toggleContextMenu"
+        class="opacity-0 group-hover:opacity-100 p-1 rounded hover:bg-white/10 transition-all"
+        title="More options"
+      >
+        <MoreVertical class="w-3 h-3 sm:w-4 sm:h-4 text-gray-400" />
+      </button>
+    </div>
+
+    <!-- Context Menu -->
+    <div
+      v-if="showContextMenu && events.length > 0"
+      class="absolute top-8 right-2 bg-gray-800/95 backdrop-blur-sm border border-gray-700 rounded-lg shadow-2xl overflow-hidden min-w-[180px]"
+      style="z-index: 9999"
+      @click.stop
+    >
+      <button
+        @click="handleViewAllEvents"
+        class="w-full px-4 py-2.5 text-left text-sm text-gray-300 hover:bg-gray-700 hover:text-white transition-colors flex items-center gap-2 whitespace-nowrap"
+      >
+        <Eye class="w-4 h-4 shrink-0" />
+        <span>View All Events</span>
+      </button>
+      <button
+        @click="handleDeleteAllEvents"
+        class="w-full px-4 py-2.5 text-left text-sm text-red-400 hover:bg-red-900/30 hover:text-red-300 transition-colors flex items-center gap-2 whitespace-nowrap border-t border-gray-700/50"
+      >
+        <Trash2 class="w-4 h-4 shrink-0" />
+        <span>Delete All Events</span>
+      </button>
     </div>
 
     <!-- Events Container -->
@@ -36,10 +70,10 @@
           getEventColorClass(event.color),
           'hover:scale-105',
         ]"
-        :title="`${event.title} - ${event.time}`"
+        :title="`${event.title} - ${formatTime(event.time)}`"
         @click.stop="handleEventClick(event.id)"
       >
-        <span class="font-semibold mr-1">{{ event.time }}</span>
+        <span class="font-semibold mr-1">{{ formatTime(event.time) }}</span>
         <span>{{ event.title }}</span>
       </div>
       <button
@@ -54,8 +88,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, ref, onMounted, onUnmounted } from "vue";
 import { format } from "date-fns";
+import { MoreVertical, Eye, Trash2 } from "lucide-vue-next";
 import type { CalendarEvent, ColorType } from "@/types/calendar";
 
 interface Props {
@@ -77,7 +112,25 @@ const emit = defineEmits<{
   select: [date: Date];
   eventClick: [eventId: string];
   viewMore: [date: Date];
+  deleteAll: [date: Date];
 }>();
+
+const showContextMenu = ref(false);
+
+/**
+ * Close context menu when clicking outside
+ */
+const closeContextMenu = (): void => {
+  showContextMenu.value = false;
+};
+
+onMounted(() => {
+  document.addEventListener("click", closeContextMenu);
+});
+
+onUnmounted(() => {
+  document.removeEventListener("click", closeContextMenu);
+});
 
 const maxDisplayedEvents = 2;
 
@@ -86,6 +139,17 @@ const dayNumber = computed((): string => format(props.date, "d"));
 const displayedEvents = computed(() => {
   return props.events.slice(0, maxDisplayedEvents);
 });
+
+const formatTime = (timeStr: string): string => {
+  try {
+    const [hours, minutes] = timeStr.split(":").map(Number);
+    const period = hours >= 12 ? "PM" : "AM";
+    const hour12 = hours % 12 || 12;
+    return `${hour12}:${minutes.toString().padStart(2, "0")} ${period}`;
+  } catch {
+    return timeStr;
+  }
+};
 
 /**
  * Handle day click - emit for creating new event
@@ -111,6 +175,38 @@ const handleEventClick = (eventId: string): void => {
  */
 const handleViewMore = (): void => {
   emit("viewMore", props.date);
+};
+
+/**
+ * Toggle context menu
+ */
+const toggleContextMenu = (): void => {
+  showContextMenu.value = !showContextMenu.value;
+};
+
+/**
+ * Handle context menu (right-click)
+ */
+const handleContextMenu = (): void => {
+  if (props.events.length > 0) {
+    showContextMenu.value = true;
+  }
+};
+
+/**
+ * Handle view all events from context menu
+ */
+const handleViewAllEvents = (): void => {
+  showContextMenu.value = false;
+  emit("viewMore", props.date);
+};
+
+/**
+ * Handle delete all events from context menu
+ */
+const handleDeleteAllEvents = (): void => {
+  showContextMenu.value = false;
+  emit("deleteAll", props.date);
 };
 
 /**

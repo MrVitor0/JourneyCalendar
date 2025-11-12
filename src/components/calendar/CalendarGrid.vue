@@ -126,6 +126,7 @@
         @select="handleDateSelect"
         @event-click="handleEventClick"
         @view-more="handleViewMore"
+        @delete-all="handleDeleteAll"
       />
     </div>
   </div>
@@ -140,6 +141,7 @@ interface CalendarGridEmits {
   (e: "date-click", date: Date): void;
   (e: "event-click", eventId: string): void;
   (e: "view-more", date: Date): void;
+  (e: "delete-all", date: Date): void;
 }
 
 const emit = defineEmits<CalendarGridEmits>();
@@ -177,5 +179,9 @@ const handleEventClick = (eventId: string): void => {
 
 const handleViewMore = (date: Date): void => {
   emit("view-more", date);
+};
+
+const handleDeleteAll = (date: Date): void => {
+  emit("delete-all", date);
 };
 </script>

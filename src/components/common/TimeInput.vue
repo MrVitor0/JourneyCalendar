@@ -83,7 +83,7 @@ const props = withDefaults(defineProps<TimeInputProps>(), {
   placeholder: "Select a time",
   required: false,
   disabled: false,
-  use12Hour: false,
+  use12Hour: true,
   minuteStep: 5,
 });
 

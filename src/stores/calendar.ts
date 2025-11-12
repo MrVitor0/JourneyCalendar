@@ -180,13 +180,21 @@ export const useCalendarStore = defineStore("calendar", {
     },
 
     /**
-     * Get events for a specific date
+     * Get events for a specific date sorted by time
      */
     getEventsForDate:
       (state) =>
       (date: Date): CalendarEvent[] => {
         const dateStr = format(date, "yyyy-MM-dd");
-        return state.events.filter((event) => event.date === dateStr);
+        return state.events
+          .filter((event) => event.date === dateStr)
+          .sort((a, b) => {
+            const timeA = a.time.split(":").map(Number);
+            const timeB = b.time.split(":").map(Number);
+            const minutesA = timeA[0] * 60 + timeA[1];
+            const minutesB = timeB[0] * 60 + timeB[1];
+            return minutesA - minutesB;
+          });
       },
 
     /**
@@ -248,7 +256,7 @@ export const useCalendarStore = defineStore("calendar", {
       },
 
     /**
-     * Get all events for a specific date (filtered by visible calendars)
+     * Get all events for a specific date sorted by time (filtered by visible calendars)
      */
     getVisibleEventsForDate:
       (state) =>
@@ -258,11 +266,19 @@ export const useCalendarStore = defineStore("calendar", {
           .filter((cal) => cal.visible)
           .map((cal) => cal.id);
 
-        return state.events.filter(
-          (event) =>
-            event.date === dateStr &&
-            visibleCalendarIds.includes(event.calendar)
-        );
+        return state.events
+          .filter(
+            (event) =>
+              event.date === dateStr &&
+              visibleCalendarIds.includes(event.calendar)
+          )
+          .sort((a, b) => {
+            const timeA = a.time.split(":").map(Number);
+            const timeB = b.time.split(":").map(Number);
+            const minutesA = timeA[0] * 60 + timeA[1];
+            const minutesB = timeB[0] * 60 + timeB[1];
+            return minutesA - minutesB;
+          });
       },
   },
 

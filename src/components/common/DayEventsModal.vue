@@ -34,7 +34,7 @@
               <div class="flex flex-wrap gap-3 text-sm text-gray-400">
                 <div class="flex items-center gap-1">
                   <Clock class="w-3.5 h-3.5" />
-                  <span>{{ event.time }}</span>
+                  <span>{{ formatTime(event.time) }}</span>
                 </div>
 
                 <div class="flex items-center gap-1">
@@ -132,7 +132,8 @@ const events = computed((): CalendarEvent[] => {
 });
 
 const sortedEvents = computed((): CalendarEvent[] => {
-  return [...events.value].sort((a, b) => a.time.localeCompare(b.time));
+  // Events are already sorted by time from the store
+  return events.value;
 });
 
 const modalTitle = computed((): string => {
@@ -145,6 +146,17 @@ const modalTitle = computed((): string => {
 const getCalendarName = (calendarId: string): string => {
   const calendar = calendars.value.find((c) => c.id === calendarId);
   return calendar?.name || calendarId;
+};
+
+const formatTime = (timeStr: string): string => {
+  try {
+    const [hours, minutes] = timeStr.split(":").map(Number);
+    const period = hours >= 12 ? "PM" : "AM";
+    const hour12 = hours % 12 || 12;
+    return `${hour12}:${minutes.toString().padStart(2, "0")} ${period}`;
+  } catch {
+    return timeStr;
+  }
 };
 
 const getColorBgClass = (color: ColorType): string => {

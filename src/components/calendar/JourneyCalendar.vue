@@ -14,6 +14,7 @@
           @date-click="handleDateClick"
           @event-click="handleEventClick"
           @view-more="handleViewMore"
+          @delete-all="handleDeleteAll"
         />
       </div>
     </div>
@@ -45,11 +46,16 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
+import { useCalendarStore } from "@/stores/calendar";
+import { useToastStore } from "@/stores/toast";
 import CalendarGrid from "./CalendarGrid.vue";
 import CalendarSidebar from "./CalendarSidebar.vue";
 import ReminderModal from "@/components/common/ReminderModal.vue";
 import EventDetailsModal from "@/components/common/EventDetailsModal.vue";
 import DayEventsModal from "@/components/common/DayEventsModal.vue";
+
+const calendarStore = useCalendarStore();
+const toastStore = useToastStore();
 
 // Create Reminder Modal State
 const isReminderModalOpen = ref(false);
@@ -85,6 +91,21 @@ const handleEventClick = (eventId: string): void => {
 const handleViewMore = (date: Date): void => {
   selectedDateForView.value = date;
   isDayEventsModalOpen.value = true;
+};
+
+/**
+ * Handle delete all events for a specific day
+ */
+const handleDeleteAll = (date: Date): void => {
+  const count = calendarStore.deleteEventsForDate(date);
+  if (count > 0) {
+    toastStore.success(
+      "Events Deleted",
+      `${count} ${count === 1 ? "event" : "events"} deleted successfully`
+    );
+  } else {
+    toastStore.info("No Events", "No events to delete on this day");
+  }
 };
 
 /**

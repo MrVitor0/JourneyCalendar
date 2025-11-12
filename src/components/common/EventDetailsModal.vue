@@ -12,7 +12,10 @@
             <h3 class="text-xl font-bold text-white mb-1">{{ event.title }}</h3>
             <div class="flex items-center gap-2 text-sm text-gray-400">
               <Calendar class="w-4 h-4" />
-              <span>{{ formatDate(event.date) }} at {{ event.time }}</span>
+              <span
+                >{{ formatDate(event.date) }} at
+                {{ formatTime(event.time) }}</span
+              >
             </div>
           </div>
           <div
@@ -158,6 +161,17 @@ const formatDate = (dateStr: string): string => {
     return format(parseISO(dateStr), "MMMM d, yyyy");
   } catch {
     return dateStr;
+  }
+};
+
+const formatTime = (timeStr: string): string => {
+  try {
+    const [hours, minutes] = timeStr.split(":").map(Number);
+    const period = hours >= 12 ? "PM" : "AM";
+    const hour12 = hours % 12 || 12;
+    return `${hour12}:${minutes.toString().padStart(2, "0")} ${period}`;
+  } catch {
+    return timeStr;
   }
 };
 

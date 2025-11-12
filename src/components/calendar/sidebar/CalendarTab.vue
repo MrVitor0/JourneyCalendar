@@ -224,42 +224,13 @@ const { toggleCalendarVisibility, setViewMode, toggleShowWeekends } =
 
 const showReminderModal = ref<boolean>(false);
 
-// Computed properties for statistics
-const totalEvents = computed((): number => {
-  return calendarStore.events.length;
-});
-
-const eventsThisMonth = computed((): number => {
-  const now = new Date();
-  const monthStart = startOfMonth(now);
-  const monthEnd = endOfMonth(now);
-
-  return calendarStore.events.filter((event: CalendarEvent) => {
-    const eventDate = parseISO(event.startDate);
-    return eventDate >= monthStart && eventDate <= monthEnd;
-  }).length;
-});
-
-const upcomingEvents = computed((): number => {
-  const now = new Date();
-  return calendarStore.events.filter((event: CalendarEvent) => {
-    const eventDate = parseISO(event.startDate);
-    return isFuture(eventDate);
-  }).length;
-});
-
 const allCalendarsVisible = computed((): boolean => {
   return calendars.value.every((cal) => cal.visible);
 });
 
 const getCalendarEventCount = (calendarId: string): number => {
-  const calendarName = calendars.value.find(
-    (cal) => cal.id === calendarId
-  )?.name;
-  if (!calendarName) return 0;
-
   return calendarStore.events.filter(
-    (event: CalendarEvent) => event.calendar === calendarName
+    (event: CalendarEvent) => event.calendar === calendarId
   ).length;
 };
 
