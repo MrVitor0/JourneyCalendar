@@ -7,7 +7,12 @@
       <button
         type="button"
         @click="toggleDropdown"
-        class="w-full flex items-center gap-2.5 bg-gray-800/60 backdrop-blur-sm rounded-xl px-4 py-3 border border-white/10 hover:border-white/20 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+        :class="[
+          'w-full flex items-center gap-2.5 bg-gray-800/60 backdrop-blur-sm rounded-xl px-4 py-3 border transition-all focus:outline-none focus:ring-2',
+          error
+            ? 'border-red-500/50 hover:border-red-500/60 focus:ring-red-500/50'
+            : 'border-white/10 hover:border-white/20 focus:ring-blue-500/50',
+        ]"
       >
         <div
           v-if="selectedOption"
@@ -84,6 +89,7 @@
         </div>
       </Transition>
     </div>
+    <p v-if="error" class="mt-1 text-xs text-red-400">{{ error }}</p>
   </div>
 </template>
 
@@ -104,12 +110,14 @@ interface Props {
   options: SelectOption[];
   placeholder?: string;
   label?: string;
+  error?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   modelValue: null,
   placeholder: "Select an option",
   label: "",
+  error: "",
 });
 
 const emit = defineEmits<{

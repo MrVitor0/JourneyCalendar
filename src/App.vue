@@ -19,11 +19,15 @@
     <main class="app-content">
       <router-view />
     </main>
+
+    <!-- Global Toast Container -->
+    <ToastContainer />
   </div>
 </template>
 
 <script setup lang="ts">
 import AppNavbar from "@/components/layout/AppNavbar.vue";
+import ToastContainer from "@/components/common/ToastContainer.vue";
 </script>
 
 <style>
