@@ -1,20 +1,20 @@
 <template>
   <div class="date-picker">
     <!-- Calendar Header -->
-    <div class="flex items-center justify-between mb-4 px-2">
+    <div class="flex items-center justify-between mb-2 px-1">
       <button
         @click="previousMonth"
         type="button"
-        class="p-2 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-all duration-200 hover:scale-105"
+        class="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-all duration-200"
         aria-label="Previous month"
       >
-        <ChevronLeft class="w-4 h-4" />
+        <ChevronLeft class="w-3.5 h-3.5" />
       </button>
 
-      <div class="flex items-center gap-2">
+      <div class="flex items-center gap-1.5">
         <select
           v-model="currentMonth"
-          class="bg-gray-700/60 text-white text-sm rounded-lg px-3 py-1.5 border border-white/10 focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20 outline-none cursor-pointer"
+          class="bg-gray-700/60 text-white text-xs rounded-lg px-2 py-1 border border-white/10 focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20 outline-none cursor-pointer"
         >
           <option
             v-for="(month, index) in monthNames"
@@ -27,7 +27,7 @@
 
         <select
           v-model="currentYear"
-          class="bg-gray-700/60 text-white text-sm rounded-lg px-3 py-1.5 border border-white/10 focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20 outline-none cursor-pointer"
+          class="bg-gray-700/60 text-white text-xs rounded-lg px-2 py-1 border border-white/10 focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20 outline-none cursor-pointer"
         >
           <option v-for="year in yearRange" :key="year" :value="year">
             {{ year }}
@@ -38,26 +38,26 @@
       <button
         @click="nextMonth"
         type="button"
-        class="p-2 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-all duration-200 hover:scale-105"
+        class="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-all duration-200"
         aria-label="Next month"
       >
-        <ChevronRight class="w-4 h-4" />
+        <ChevronRight class="w-3.5 h-3.5" />
       </button>
     </div>
 
     <!-- Weekday Headers -->
-    <div class="grid grid-cols-7 gap-1 mb-2 px-2">
+    <div class="grid grid-cols-7 gap-0.5 mb-1 px-1">
       <div
         v-for="day in weekDays"
         :key="day"
-        class="text-center text-xs font-semibold text-gray-400 py-1"
+        class="text-center text-[10px] font-semibold text-gray-400 py-0.5"
       >
         {{ day }}
       </div>
     </div>
 
     <!-- Calendar Days Grid -->
-    <div class="grid grid-cols-7 gap-1 px-2">
+    <div class="grid grid-cols-7 gap-0.5 px-1">
       <button
         v-for="(day, index) in calendarDays"
         :key="index"
@@ -65,7 +65,7 @@
         :disabled="!isDateInRange(day.date)"
         @click="selectDate(day.date)"
         :class="[
-          'aspect-square p-1 rounded-lg text-sm transition-all duration-200 relative',
+          'aspect-square p-0.5 rounded-md text-xs transition-all duration-200 relative',
           day.isCurrentMonth
             ? 'text-gray-200 hover:bg-white/10'
             : 'text-gray-600 hover:bg-white/5',
@@ -73,7 +73,7 @@
             ? 'cursor-pointer'
             : 'opacity-30 cursor-not-allowed',
           isDateSelected(day.date) &&
-            'bg-blue-500 hover:bg-blue-600 text-white font-bold ring-2 ring-blue-400/50',
+            'bg-blue-500 hover:bg-blue-600 text-white font-bold ring-1 ring-blue-400/50',
           isDateToday(day.date) &&
             !isDateSelected(day.date) &&
             'ring-1 ring-purple-400 bg-purple-500/20 text-purple-300',
@@ -85,12 +85,12 @@
 
     <!-- Quick Actions -->
     <div
-      class="flex items-center justify-between mt-4 px-2 pt-3 border-t border-white/10"
+      class="flex items-center justify-between mt-2 px-1 pt-2 border-t border-white/10"
     >
       <button
         @click="selectToday"
         type="button"
-        class="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs font-medium transition-all duration-200"
+        class="px-2 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-white text-[10px] font-medium transition-all duration-200"
       >
         Today
       </button>
@@ -98,7 +98,7 @@
         v-if="modelValue"
         @click="clearDate"
         type="button"
-        class="px-3 py-1.5 rounded-lg bg-red-500/20 hover:bg-red-500/30 text-red-300 text-xs font-medium transition-all duration-200"
+        class="px-2 py-1 rounded-lg bg-red-500/20 hover:bg-red-500/30 text-red-300 text-[10px] font-medium transition-all duration-200"
       >
         Clear
       </button>

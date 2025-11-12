@@ -40,7 +40,7 @@
       >
         <div
           v-if="isPickerOpen"
-          class="absolute z-50 mt-2 bg-gray-800/95 backdrop-blur-xl rounded-xl shadow-2xl border border-white/10 p-4 w-80"
+          class="absolute z-50 mt-2 bg-gray-800/95 backdrop-blur-xl rounded-xl shadow-2xl border border-white/10 p-3 w-72"
           :class="dropdownPosition"
         >
           <DatePicker
@@ -183,14 +183,25 @@ const updateDropdownPosition = (): void => {
   const rect = containerRef.value.getBoundingClientRect();
   const spaceBelow = window.innerHeight - rect.bottom;
   const spaceRight = window.innerWidth - rect.left;
+  const pickerWidth = 288; // w-72 = 18rem = 288px
+  const pickerHeight = 350; // approximate height
 
-  if (spaceRight < 320) {
-    dropdownPosition.value = "right-0";
+  let position = "";
+
+  // Check horizontal position
+  if (spaceRight < pickerWidth) {
+    position = "right-0";
   } else {
-    dropdownPosition.value = "left-0";
+    position = "left-0";
   }
-};
 
+  // Check vertical position
+  if (spaceBelow < pickerHeight && rect.top > pickerHeight) {
+    position += " bottom-full mb-2";
+  }
+
+  dropdownPosition.value = position || "left-0";
+};
 onMounted(() => {
   document.addEventListener("click", handleClickOutside);
 });
