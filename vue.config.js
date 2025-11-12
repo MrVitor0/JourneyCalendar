@@ -1,5 +1,6 @@
 const { defineConfig } = require("@vue/cli-service");
 module.exports = defineConfig({
+  publicPath: process.env.NODE_ENV === "production" ? "/JourneyCalendar/" : "/",
   transpileDependencies: true,
   lintOnSave: false, // Disable ESLint during serve to avoid version conflicts
   chainWebpack: (config) => {
