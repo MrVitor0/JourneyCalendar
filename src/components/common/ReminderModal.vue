@@ -12,7 +12,6 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { storeToRefs } from "pinia";
 import { useCalendarStore } from "@/stores/calendar";
 import { useToastStore } from "@/stores/toast";
 import Modal from "@/components/common/Modal.vue";
@@ -59,6 +58,8 @@ const handleSubmit = (formData: ReminderFormData): void => {
     date: formData.date,
     time: formData.time,
     city: formData.city,
+    cityLocation: formData.cityLocation,
+    weather: formData.weather,
     calendar: formData.calendar,
     color: formData.color as ColorType,
   });

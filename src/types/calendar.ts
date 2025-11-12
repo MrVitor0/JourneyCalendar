@@ -1,4 +1,4 @@
-export type WeatherType = "sunny" | "cloudy" | "rainy" | "snowy";
+export type WeatherType = "sunny" | "cloudy" | "rainy" | "snowy" | "drizzle";
 export type ViewMode = "month" | "week";
 export type ColorType =
   | "gray"
@@ -10,6 +10,29 @@ export type ColorType =
   | "orange";
 
 /**
+ * City location data
+ */
+export interface CityLocation {
+  name: string;
+  latitude: number;
+  longitude: number;
+  country: string;
+  countryCode: string;
+  admin1?: string;
+  timezone: string;
+}
+
+/**
+ * Weather information for an event
+ */
+export interface EventWeather {
+  type: WeatherType;
+  temperatureMax: number;
+  temperatureMin: number;
+  weatherCode: number;
+}
+
+/**
  * Calendar Event Interface
  * Represents a single event in the calendar system
  */
@@ -19,9 +42,10 @@ export interface CalendarEvent {
   date: string; // YYYY-MM-DD format
   time: string; // HH:mm format
   city: string;
+  cityLocation?: CityLocation; // Full city data
   calendar: string; // Calendar ID reference
   color: ColorType;
-  weather?: WeatherType; // Optional: to be fetched based on city
+  weather?: EventWeather; // Weather data for the event
   createdAt: string; // ISO timestamp
   updatedAt: string; // ISO timestamp
 }
@@ -34,6 +58,8 @@ export interface CreateEventInput {
   date: string;
   time: string;
   city: string;
+  cityLocation?: CityLocation;
+  weather?: EventWeather;
   calendar: string;
   color: ColorType;
 }

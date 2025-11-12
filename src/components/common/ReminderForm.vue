@@ -32,16 +32,55 @@
       />
     </div>
 
-    <!-- City Input -->
-    <TextInput
-      v-model="formData.city"
+    <!-- City Autocomplete -->
+    <CityAutocomplete
+      v-model="selectedCity"
       label="City"
-      placeholder="Enter city name"
-      :icon="MapPin"
+      placeholder="Search for a city..."
       :required="true"
-      :error="errors.city"
-      hint="Weather will be fetched automatically"
+      @update:model-value="handleCityChange"
     />
+
+    <!-- Weather Loading -->
+    <div
+      v-if="loadingWeather"
+      class="flex items-center gap-2 px-4 py-3 bg-blue-500/10 border border-blue-500/30 rounded-lg"
+    >
+      <div
+        class="w-4 h-4 border-2 border-blue-500/30 border-t-blue-500 rounded-full animate-spin"
+      ></div>
+      <span class="text-sm text-blue-300">Fetching weather data...</span>
+    </div>
+
+    <!-- Weather Preview -->
+    <div
+      v-if="weatherData && !loadingWeather"
+      class="flex items-center gap-3 px-4 py-3 bg-gray-800/40 border border-white/10 rounded-lg"
+    >
+      <div
+        :class="[
+          'w-10 h-10 rounded-full flex items-center justify-center shrink-0',
+          getWeatherStyle(weatherData.weatherType).bgClass,
+        ]"
+      >
+        <component
+          :is="getWeatherStyle(weatherData.weatherType).icon"
+          :class="[
+            'w-5 h-5',
+            getWeatherStyle(weatherData.weatherType).iconClass,
+          ]"
+        />
+      </div>
+      <div class="flex-1 min-w-0">
+        <div class="text-sm font-medium text-white">
+          {{ getWeatherStyle(weatherData.weatherType).label }}
+        </div>
+        <div class="text-xs text-gray-400">
+          {{ weatherData.temperatureMin }}°C -
+          {{ weatherData.temperatureMax }}°C
+        </div>
+      </div>
+    </div>
 
     <!-- Calendar and Color Selects (side by side) -->
     <div class="grid grid-cols-2 gap-3">
@@ -100,9 +139,9 @@ import DateInput from "@/components/common/DateInput.vue";
 import TimeInput from "@/components/common/TimeInput.vue";
 import CircleSelect from "@/components/common/CircleSelect.vue";
 import ColorSelect from "@/components/common/ColorSelect.vue";
+import CityAutocomplete from "@/components/common/CityAutocomplete.vue";
 import {
   Type,
-  MapPin,
   Calendar,
   Save,
   X,
@@ -110,9 +149,19 @@ import {
   User,
   Cake,
   CheckSquare,
+  Sun,
+  Cloud,
+  CloudRain,
+  CloudSnow,
+  CloudDrizzle,
 } from "lucide-vue-next";
 import type { ReminderFormData } from "@/types/components";
-import type { ColorType } from "@/types/calendar";
+import type { ColorType, CityLocation } from "@/types/calendar";
+import {
+  getWeatherForecast,
+  type City,
+  type WeatherData,
+} from "@/api/weatherService";
 
 interface ReminderFormProps {
   initialData?: Partial<ReminderFormData>;
@@ -148,6 +197,100 @@ const formData = ref<ReminderFormData>({
 
 const errors = ref<Record<string, string>>({});
 const isSubmitting = ref(false);
+
+// City and weather state
+const selectedCity = ref<City | null>(null);
+const loadingWeather = ref(false);
+const weatherData = ref<WeatherData | null>(null);
+const cityLocationData = ref<CityLocation | null>(null);
+
+/**
+ * Get weather icon and styles based on weather type
+ */
+const getWeatherStyle = (weatherType: string) => {
+  const styles: Record<
+    string,
+    { icon: any; iconClass: string; bgClass: string; label: string }
+  > = {
+    sunny: {
+      icon: Sun,
+      iconClass: "text-yellow-400",
+      bgClass: "bg-yellow-500/20",
+      label: "Sunny",
+    },
+    cloudy: {
+      icon: Cloud,
+      iconClass: "text-gray-400",
+      bgClass: "bg-gray-500/20",
+      label: "Cloudy",
+    },
+    rainy: {
+      icon: CloudRain,
+      iconClass: "text-blue-400",
+      bgClass: "bg-blue-500/20",
+      label: "Rainy",
+    },
+    snowy: {
+      icon: CloudSnow,
+      iconClass: "text-cyan-400",
+      bgClass: "bg-cyan-500/20",
+      label: "Snowy",
+    },
+    drizzle: {
+      icon: CloudDrizzle,
+      iconClass: "text-indigo-400",
+      bgClass: "bg-indigo-500/20",
+      label: "Drizzle",
+    },
+  };
+
+  return styles[weatherType] || styles.cloudy;
+};
+
+/**
+ * Handle city selection and fetch weather
+ */
+const handleCityChange = async (city: City | null): Promise<void> => {
+  if (!city) {
+    weatherData.value = null;
+    cityLocationData.value = null;
+    formData.value.city = "";
+    return;
+  }
+
+  // Update form data with city name
+  formData.value.city = city.name;
+
+  // Store city location data
+  cityLocationData.value = {
+    name: city.name,
+    latitude: city.latitude,
+    longitude: city.longitude,
+    country: city.country,
+    countryCode: city.country_code,
+    admin1: city.admin1,
+    timezone: city.timezone,
+  };
+
+  // Fetch weather for the selected date and city
+  if (formData.value.date) {
+    loadingWeather.value = true;
+    try {
+      const weather = await getWeatherForecast(
+        city.latitude,
+        city.longitude,
+        formData.value.date
+      );
+      weatherData.value = weather;
+    } catch (error) {
+      console.error("Error fetching weather:", error);
+      toastStore.error("Weather Error", "Failed to fetch weather data");
+      weatherData.value = null;
+    } finally {
+      loadingWeather.value = false;
+    }
+  }
+};
 
 const calendarOptions = computed(() => {
   const iconMap: Record<string, any> = {
@@ -188,6 +331,29 @@ watch(
     }
   },
   { deep: true }
+);
+
+// Watch for date changes to refetch weather
+watch(
+  () => formData.value.date,
+  async (newDate) => {
+    if (selectedCity.value && newDate) {
+      loadingWeather.value = true;
+      try {
+        const weather = await getWeatherForecast(
+          selectedCity.value.latitude,
+          selectedCity.value.longitude,
+          newDate
+        );
+        weatherData.value = weather;
+      } catch (error) {
+        console.error("Error fetching weather:", error);
+        weatherData.value = null;
+      } finally {
+        loadingWeather.value = false;
+      }
+    }
+  }
 );
 
 const validateForm = (): boolean => {
@@ -277,8 +443,22 @@ const handleSubmit = async (): Promise<void> => {
   isSubmitting.value = true;
 
   try {
+    // Prepare data with weather and city location
+    const submitData: ReminderFormData = {
+      ...formData.value,
+      cityLocation: cityLocationData.value || undefined,
+      weather: weatherData.value
+        ? {
+            type: weatherData.value.weatherType as any,
+            temperatureMax: weatherData.value.temperatureMax,
+            temperatureMin: weatherData.value.temperatureMin,
+            weatherCode: weatherData.value.weatherCode,
+          }
+        : undefined,
+    };
+
     // Pass data to parent component for handling
-    emit("submit", { ...formData.value });
+    emit("submit", submitData);
 
     // Reset form if not editing (creating new event)
     if (!props.initialData) {
@@ -290,6 +470,9 @@ const handleSubmit = async (): Promise<void> => {
         calendar: "personal",
         color: "blue",
       };
+      selectedCity.value = null;
+      weatherData.value = null;
+      cityLocationData.value = null;
       errors.value = {};
     }
   } finally {

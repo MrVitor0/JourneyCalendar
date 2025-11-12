@@ -27,6 +27,39 @@
           <div class="flex items-center gap-2 text-gray-300">
             <MapPin class="w-4 h-4 text-gray-400" />
             <span>{{ event.city }}</span>
+            <span v-if="event.cityLocation" class="text-sm text-gray-500">
+              ({{ event.cityLocation.country }})
+            </span>
+          </div>
+
+          <!-- Weather Information -->
+          <div
+            v-if="event.weather"
+            class="flex items-center gap-3 p-3 bg-gray-700/30 rounded-lg border border-gray-600/30"
+          >
+            <div
+              :class="[
+                'w-10 h-10 rounded-full flex items-center justify-center shrink-0',
+                getWeatherStyle(event.weather.type).bgClass,
+              ]"
+            >
+              <component
+                :is="getWeatherStyle(event.weather.type).icon"
+                :class="[
+                  'w-5 h-5',
+                  getWeatherStyle(event.weather.type).iconClass,
+                ]"
+              />
+            </div>
+            <div class="flex-1">
+              <div class="text-sm font-medium text-white">
+                {{ getWeatherStyle(event.weather.type).label }}
+              </div>
+              <div class="text-xs text-gray-400">
+                {{ event.weather.temperatureMin }}°C -
+                {{ event.weather.temperatureMax }}°C
+              </div>
+            </div>
           </div>
 
           <div class="flex items-center gap-2 text-gray-300">
@@ -99,8 +132,13 @@ import {
   Clock,
   Edit,
   Trash2,
+  Sun,
+  Cloud,
+  CloudRain,
+  CloudSnow,
+  CloudDrizzle,
 } from "lucide-vue-next";
-import type { CalendarEvent, ColorType } from "@/types/calendar";
+import type { CalendarEvent, ColorType, WeatherType } from "@/types/calendar";
 import type { ReminderFormData } from "@/types/components";
 
 interface EventDetailsModalProps {
@@ -201,6 +239,49 @@ const getColorBgClass = (color: ColorType): string => {
   return colorMap[color] || colorMap.blue;
 };
 
+/**
+ * Get weather icon and styles based on weather type
+ */
+const getWeatherStyle = (weatherType: WeatherType) => {
+  const styles: Record<
+    WeatherType,
+    { icon: any; iconClass: string; bgClass: string; label: string }
+  > = {
+    sunny: {
+      icon: Sun,
+      iconClass: "text-yellow-400",
+      bgClass: "bg-yellow-500/20",
+      label: "Sunny",
+    },
+    cloudy: {
+      icon: Cloud,
+      iconClass: "text-gray-400",
+      bgClass: "bg-gray-500/20",
+      label: "Cloudy",
+    },
+    rainy: {
+      icon: CloudRain,
+      iconClass: "text-blue-400",
+      bgClass: "bg-blue-500/20",
+      label: "Rainy",
+    },
+    snowy: {
+      icon: CloudSnow,
+      iconClass: "text-cyan-400",
+      bgClass: "bg-cyan-500/20",
+      label: "Snowy",
+    },
+    drizzle: {
+      icon: CloudDrizzle,
+      iconClass: "text-indigo-400",
+      bgClass: "bg-indigo-500/20",
+      label: "Drizzle",
+    },
+  };
+
+  return styles[weatherType] || styles.cloudy;
+};
+
 const handleEdit = (): void => {
   isEditing.value = true;
 };
@@ -218,6 +299,8 @@ const handleUpdate = (formData: ReminderFormData): void => {
     date: formData.date,
     time: formData.time,
     city: formData.city,
+    cityLocation: formData.cityLocation,
+    weather: formData.weather,
     calendar: formData.calendar,
     color: formData.color as ColorType,
   });

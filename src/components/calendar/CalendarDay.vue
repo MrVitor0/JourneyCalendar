@@ -12,19 +12,39 @@
     @click="handleDayClick"
     @contextmenu.prevent="handleContextMenu"
   >
-    <!-- Day Number -->
+    <!-- Day Number and Weather -->
     <div class="flex justify-between items-start mb-1 sm:mb-2">
-      <span
-        :class="[
-          'text-sm sm:text-base lg:text-lg font-bold',
-          isToday
-            ? 'text-purple-300 bg-purple-500/20 px-2 py-0.5 rounded-full'
-            : 'text-gray-300',
-          isSelected && !isToday && 'text-blue-300',
-        ]"
-      >
-        {{ dayNumber }}
-      </span>
+      <div class="flex items-center gap-1.5">
+        <span
+          :class="[
+            'text-sm sm:text-base lg:text-lg font-bold',
+            isToday
+              ? 'text-purple-300 bg-purple-500/20 px-2 py-0.5 rounded-full'
+              : 'text-gray-300',
+            isSelected && !isToday && 'text-blue-300',
+          ]"
+        >
+          {{ dayNumber }}
+        </span>
+
+        <!-- Weather Icon (compact) -->
+        <div
+          v-if="firstEventWithWeather"
+          :class="[
+            'w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center shrink-0',
+            getWeatherStyle(firstEventWithWeather.weather!.type).bgClass,
+          ]"
+          :title="`${getWeatherStyle(firstEventWithWeather.weather!.type).label}: ${firstEventWithWeather.weather!.temperatureMin}°C - ${firstEventWithWeather.weather!.temperatureMax}°C`"
+        >
+          <component
+            :is="getWeatherStyle(firstEventWithWeather.weather!.type).icon"
+            :class="[
+              'w-3 h-3 sm:w-3.5 sm:h-3.5',
+              getWeatherStyle(firstEventWithWeather.weather!.type).iconClass,
+            ]"
+          />
+        </div>
+      </div>
 
       <!-- Context Menu Button (visible on hover if there are events) -->
       <button
@@ -90,8 +110,17 @@
 <script setup lang="ts">
 import { computed, ref, onMounted, onUnmounted } from "vue";
 import { format } from "date-fns";
-import { MoreVertical, Eye, Trash2 } from "lucide-vue-next";
-import type { CalendarEvent, ColorType } from "@/types/calendar";
+import {
+  MoreVertical,
+  Eye,
+  Trash2,
+  Sun,
+  Cloud,
+  CloudRain,
+  CloudSnow,
+  CloudDrizzle,
+} from "lucide-vue-next";
+import type { CalendarEvent, ColorType, WeatherType } from "@/types/calendar";
 
 interface Props {
   date: Date;
@@ -139,6 +168,56 @@ const dayNumber = computed((): string => format(props.date, "d"));
 const displayedEvents = computed(() => {
   return props.events.slice(0, maxDisplayedEvents);
 });
+
+/**
+ * Get first event with weather data
+ */
+const firstEventWithWeather = computed(() => {
+  return props.events.find((event) => event.weather);
+});
+
+/**
+ * Get weather icon and styles based on weather type
+ */
+const getWeatherStyle = (weatherType: WeatherType) => {
+  const styles: Record<
+    WeatherType,
+    { icon: any; iconClass: string; bgClass: string; label: string }
+  > = {
+    sunny: {
+      icon: Sun,
+      iconClass: "text-yellow-400",
+      bgClass: "bg-yellow-500/20",
+      label: "Sunny",
+    },
+    cloudy: {
+      icon: Cloud,
+      iconClass: "text-gray-400",
+      bgClass: "bg-gray-500/20",
+      label: "Cloudy",
+    },
+    rainy: {
+      icon: CloudRain,
+      iconClass: "text-blue-400",
+      bgClass: "bg-blue-500/20",
+      label: "Rainy",
+    },
+    snowy: {
+      icon: CloudSnow,
+      iconClass: "text-cyan-400",
+      bgClass: "bg-cyan-500/20",
+      label: "Snowy",
+    },
+    drizzle: {
+      icon: CloudDrizzle,
+      iconClass: "text-indigo-400",
+      bgClass: "bg-indigo-500/20",
+      label: "Drizzle",
+    },
+  };
+
+  return styles[weatherType] || styles.cloudy;
+};
 
 const formatTime = (timeStr: string): string => {
   try {

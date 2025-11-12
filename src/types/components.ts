@@ -32,4 +32,6 @@ export interface ReminderFormData {
   city: string;
   calendar: string;
   color: import("@/types/calendar").ColorType;
+  cityLocation?: import("@/types/calendar").CityLocation;
+  weather?: import("@/types/calendar").EventWeather;
 }
